@@ -1,14 +1,38 @@
-import { Bell, Search, ChevronDown } from 'lucide-react';
+import { Bell, Search, ChevronDown, Menu, X } from 'lucide-react';
 import { useAuthStore } from '@/shared/store/auth.store';
-import { Button } from '@/shared/components/ui/button';
+import { Logo } from '../ui/custom-icon';
 
-export default function Header() {
-  const { user, logout } = useAuthStore();
+interface HeaderProps {
+  onMobileMenuToggle: () => void;
+  isMobileMenuOpen: boolean;
+}
+
+export default function Header({ onMobileMenuToggle, isMobileMenuOpen }: HeaderProps) {
+  const { user } = useAuthStore();
 
   return (
     <header className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
-      {/* Search */}
-      <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
+      {/* Mobile menu button */}
+      <button
+        type="button"
+        className="lg:hidden p-2 rounded-md text-gray-700 hover:bg-gray-100"
+        onClick={onMobileMenuToggle}
+      >
+        <span className="sr-only">Open sidebar</span>
+        {isMobileMenuOpen ? (
+          <X className="h-6 w-6" aria-hidden="true" />
+        ) : (
+          <Menu className="h-6 w-6" aria-hidden="true" />
+        )}
+      </button>
+
+      {/* Logo */}
+      <div className="flex items-center">
+        <Logo size={100} />
+      </div>
+
+      {/* Search - Hidden on small screens */}
+      <div className="hidden sm:flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
         <div className="relative flex flex-1 items-center">
           <Search className="pointer-events-none absolute left-3 h-5 w-5 text-gray-400" />
           <input
@@ -19,11 +43,16 @@ export default function Header() {
         </div>
       </div>
 
-      <div className="flex items-center gap-x-4 lg:gap-x-6">
+      <div className="flex items-center gap-x-2 lg:gap-x-4 ml-auto">
+        {/* Search icon for mobile */}
+        <button className="sm:hidden p-2 text-gray-400 hover:text-gray-500">
+          <Search className="h-6 w-6" />
+        </button>
+
         {/* Notification Button */}
         <button
           type="button"
-          className="relative -m-2.5 p-2.5 text-gray-400 hover:text-gray-500"
+          className="relative p-2 text-gray-400 hover:text-gray-500"
         >
           <span className="sr-only">View notifications</span>
           <Bell className="h-6 w-6" aria-hidden="true" />
@@ -31,8 +60,8 @@ export default function Header() {
         </button>
 
         {/* Profile dropdown */}
-        <div className="flex items-center gap-x-3">
-          <div className="flex items-center gap-x-3 cursor-pointer">
+        <div className="flex items-center gap-x-2 lg:gap-x-3">
+          <div className="flex items-center gap-x-2 lg:gap-x-3 cursor-pointer">
             <img
               className="h-8 w-8 rounded-full bg-gray-200"
               src={`https://ui-avatars.com/api/?name=${user?.firstName}+${user?.lastName}&background=6B1B3D&color=fff`}
@@ -44,7 +73,7 @@ export default function Header() {
               </p>
               <p className="text-xs leading-5 text-gray-500">{user?.email}</p>
             </div>
-            <ChevronDown className="h-5 w-5 text-gray-400" />
+            <ChevronDown className="hidden lg:block h-5 w-5 text-gray-400" />
           </div>
         </div>
       </div>
