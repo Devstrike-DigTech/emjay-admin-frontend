@@ -13,6 +13,12 @@ import { analyticsRoutes } from './analytics.routes';
 // Protected Route Component
 import { ProtectedRoute } from '@/shared/components/layout/ProtectedRoute';
 import { productRoutes } from './products.routes';
+import { adsPromoRoutes } from './ads-promo.routes';
+import { financeRoutes } from './finance.routes';
+import { contactRoutes } from './contact.routes';
+import { conversationsRoutes } from './conversations.routes';
+import { categoriesRoutes } from './categories.routes';
+import { suppliersRoutes } from './suppliers.routes';
 
 export const routes: RouteObject[] = [
   // Public Routes
@@ -38,21 +44,42 @@ export const routes: RouteObject[] = [
         path: 'analytics',
         children: analyticsRoutes,
       },
-{
+
+      // Product routes
+      {
         path: 'products',
         children: productRoutes,
       },
-      // Add more route modules here as you build them
-      // Example:
-      
-      // {
-      //   path: 'services',
-      //   children: serviceRoutes,
-      // },
-      // {
-      //   path: 'staff',
-      //   children: staffRoutes,
-      // },
+
+      // Categories routes
+      ...categoriesRoutes,
+
+      // Suppliers routes
+      ...suppliersRoutes,
+
+      // Ads & Promo routes
+      {
+        path: 'ads-promo',
+        children: adsPromoRoutes,
+      },
+
+      // Finance routes
+      {
+        path: 'finance',
+        children: financeRoutes,
+      },
+
+      // Contact Us routes
+      {
+        path: 'contact-us',
+        children: contactRoutes,
+      },
+
+      // Conversations routes
+      {
+        path: 'conversations',
+        children: conversationsRoutes,
+      },
     ],
   },
 

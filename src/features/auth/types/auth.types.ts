@@ -9,9 +9,17 @@ export interface User {
   firstName: string;
   lastName: string;
   role: 'ADMIN' | 'MANAGER' | 'STAFF';
+  isActive: boolean;
+  isVerified: boolean;
+  phone?: string;
+  username: string;
+  createdAt?: string;
 }
 
 export interface AuthResponse {
-  token: string;
+  accessToken: string;
+  refreshToken: string;
+  tokenType: string;
+  expiresIn: number;
   user: User;
 }

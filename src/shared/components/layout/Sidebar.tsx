@@ -1,23 +1,29 @@
 import { Link, useLocation } from 'react-router-dom';
-import { 
-  Home, 
+import {
+  Home,
   Megaphone,
-  DollarSign, 
-  MessageSquare, 
+  DollarSign,
+  MessageSquare,
   Users,
   Settings,
   PanelLeftClose,
   PanelLeft,
-  X
+  X,
+  Tag,
+  Truck,
+  Package,
 } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
 
 const navigation = [
   { name: 'Home', href: '/', icon: Home },
+  { name: 'Products', href: '/products', icon: Package },
+  { name: 'Categories', href: '/categories', icon: Tag },
+  { name: 'Suppliers', href: '/suppliers', icon: Truck },
   { name: 'Ads & Promo', href: '/ads-promo', icon: Megaphone },
   { name: 'Finance', href: '/finance', icon: DollarSign },
-  { name: 'Contact Us', href: '/contact', icon: Settings },
   { name: 'Conversations', href: '/conversations', icon: MessageSquare },
+  { name: 'Contact Us', href: '/contact-us', icon: Settings },
   { name: 'Staff', href: '/staff', icon: Users },
 ];
 
@@ -129,28 +135,28 @@ export default function Sidebar({ isCollapsed, onToggle, isMobileOpen, onMobileC
                 const isActive = location.pathname === item.href;
                 return (
                   <li key={item.name}>
-                    <Link
-                      to={item.href}
-                      className={cn(
-                        isActive
-                          ? 'bg-[#F5E6EC] text-primary border-r-4 border-primary'
-                          : 'text-gray-600 hover:bg-gray-50',
-                        'group flex items-center gap-x-3 rounded-l-md p-3 text-sm font-medium transition-colors relative',
-                        isCollapsed && 'justify-center'
-                      )}
-                      title={isCollapsed ? item.name : undefined}
-                    >
-                      <item.icon
-                        className={cn(
-                          isActive ? 'text-primary' : 'text-gray-400',
-                          'h-6 w-6 shrink-0'
-                        )}
-                        aria-hidden="true"
-                      />
-                      {!isCollapsed && (
-                        <span className="truncate">{item.name}</span>
-                      )}
-                    </Link>
+                  <Link
+  to={item.href}
+  className={cn(
+    'w-full text-left px-4 py-4 text-sm font-medium rounded-md transition-colors flex items-center gap-x-3',
+    isActive
+      ? 'bg-[#F5E6EC] text-primary border-r-4 border-primary'
+      : 'text-gray-700 hover:bg-gray-50'
+  )}
+  title={isCollapsed ? item.name : undefined}
+>
+  <item.icon
+    className={cn(
+      isActive ? 'text-primary' : 'text-gray-400',
+      'h-5 w-5 shrink-0'
+    )}
+    aria-hidden="true"
+  />
+
+  {!isCollapsed && (
+    <span className="truncate">{item.name}</span>
+  )}
+</Link>
                   </li>
                 );
               })}

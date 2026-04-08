@@ -1,35 +1,10 @@
-import { useState, useEffect } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-
-interface DaySale {
-  rank: number;
-  day: string;
-  totalSales: number;
-  unitsSold: number;
-}
-
-const mockDaySales: DaySale[] = [
-  { rank: 1, day: 'Friday', totalSales: 1005000, unitsSold: 400 },
-  { rank: 1, day: 'Sunday', totalSales: 1005000, unitsSold: 400 },
-  { rank: 1, day: 'Thursday', totalSales: 1005000, unitsSold: 400 },
-  { rank: 1, day: 'Wednesday', totalSales: 1005000, unitsSold: 400 },
-  { rank: 1, day: 'Saturday', totalSales: 1005000, unitsSold: 400 },
-  { rank: 1, day: 'Tuesday', totalSales: 1005000, unitsSold: 400 },
-  { rank: 1, day: 'Monday', totalSales: 1005000, unitsSold: 400 },
-];
+import { useSalesByDay } from '../hooks/useAnalytics';
 
 export default function MostPurchasedDayPage() {
   const navigate = useNavigate();
-  const [daySales, setDaySales] = useState<DaySale[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    setTimeout(() => {
-      setDaySales(mockDaySales);
-      setIsLoading(false);
-    }, 500);
-  }, []);
+  const { data, isLoading, isError } = useSalesByDay();
 
   const formatCurrency = (amount: number) => {
     return `NGN ${amount.toLocaleString()}`;
@@ -43,6 +18,24 @@ export default function MostPurchasedDayPage() {
     );
   }
 
+  if (isError) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p className="text-red-600">Failed to load sales data. Please try again.</p>
+      </div>
+    );
+  }
+
+  // Sort by totalSales descending and assign rank from sort order
+  const daySales = [...(data ?? [])]
+    .sort((a, b) => b.totalSales - a.totalSales)
+    .map((item, index) => ({
+      rank: index + 1,
+      day: item.dayName,
+      totalSales: item.totalSales,
+      unitsSold: item.unitsSold,
+    }));
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto p-6">
@@ -54,7 +47,7 @@ export default function MostPurchasedDayPage() {
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
-          
+
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Most Purchased Day</h1>
             <p className="text-gray-600 mt-1">Here's a list the most purchased days of the week</p>

@@ -1,0 +1,3825 @@
+{
+  "info": {
+    "title": "Emjay Stores API",
+    "version": "1.0.0",
+    "baseUrl": "http://localhost:8080"
+  },
+  "endpoints": {
+    "Actuator": [
+      {
+        "method": "GET",
+        "path": "/actuator",
+        "summary": "Actuator root web endpoint",
+        "security": "public",
+        "params": null,
+        "requestBody": null
+      },
+      {
+        "method": "GET",
+        "path": "/actuator/health",
+        "summary": "Actuator web endpoint 'health'",
+        "security": "public",
+        "params": null,
+        "requestBody": null
+      },
+      {
+        "method": "GET",
+        "path": "/actuator/health/**",
+        "summary": "Actuator web endpoint 'health-path'",
+        "security": "public",
+        "params": null,
+        "requestBody": null
+      },
+      {
+        "method": "GET",
+        "path": "/actuator/info",
+        "summary": "Actuator web endpoint 'info'",
+        "security": "public",
+        "params": null,
+        "requestBody": null
+      },
+      {
+        "method": "GET",
+        "path": "/actuator/metrics",
+        "summary": "Actuator web endpoint 'metrics'",
+        "security": "public",
+        "params": null,
+        "requestBody": null
+      },
+      {
+        "method": "GET",
+        "path": "/actuator/metrics/{requiredMetricName}",
+        "summary": "Actuator web endpoint 'metrics-requiredMetricName'",
+        "security": "public",
+        "params": [
+          {
+            "name": "requiredMetricName",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      }
+    ],
+    "User Management": [
+      {
+        "method": "GET",
+        "path": "/api/v1/admin/users",
+        "summary": "Get all users",
+        "security": "authenticated",
+        "params": null,
+        "requestBody": null
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/admin/users",
+        "summary": "Create a new user (Admin only)",
+        "security": "authenticated",
+        "params": null,
+        "requestBody": "CreateUserRequest"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/admin/users/role/{role}",
+        "summary": "Get users by role",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "role",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/admin/users/{userId}",
+        "summary": "Get user by ID",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "PUT",
+        "path": "/api/v1/admin/users/{userId}",
+        "summary": "Update user details",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": "UpdateUserRequest"
+      },
+      {
+        "method": "DELETE",
+        "path": "/api/v1/admin/users/{userId}",
+        "summary": "Delete user",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "PATCH",
+        "path": "/api/v1/admin/users/{userId}/role",
+        "summary": "Update user role",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": "UpdateUserRoleRequest"
+      }
+    ],
+    "Ads": [
+      {
+        "method": "GET",
+        "path": "/api/v1/ads",
+        "summary": "Get all ads",
+        "security": "public",
+        "params": null,
+        "requestBody": null
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/ads",
+        "summary": "Create a new ad",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true
+          }
+        ],
+        "requestBody": "CreateAdRequest"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/ads/active",
+        "summary": "Get currently active ads",
+        "security": "public",
+        "params": null,
+        "requestBody": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/ads/{id}",
+        "summary": "Get ad by ID",
+        "security": "public",
+        "params": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "PUT",
+        "path": "/api/v1/ads/{id}",
+        "summary": "Update an ad",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true
+          }
+        ],
+        "requestBody": "UpdateAdRequest"
+      },
+      {
+        "method": "DELETE",
+        "path": "/api/v1/ads/{id}",
+        "summary": "Delete an ad",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      }
+    ],
+    "Analytics": [
+      {
+        "method": "GET",
+        "path": "/api/v1/analytics/customers/segmentation",
+        "summary": "Get customer segmentation",
+        "security": "authenticated",
+        "params": null,
+        "requestBody": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/analytics/customers/top",
+        "summary": "Get top customers by lifetime value",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/analytics/dashboard",
+        "summary": "Get dashboard overview",
+        "security": "authenticated",
+        "params": null,
+        "requestBody": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/analytics/products/top",
+        "summary": "Get top performing products",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "period",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/analytics/sales/by-day",
+        "summary": "Get sales breakdown by day of week",
+        "security": "authenticated",
+        "params": null,
+        "requestBody": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/analytics/sales/summary",
+        "summary": "Get sales summary for date range",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "startDate",
+            "in": "query",
+            "required": true
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/analytics/sales/trend",
+        "summary": "Get sales trend",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "period",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "count",
+            "in": "query",
+            "required": false
+          }
+        ],
+        "requestBody": null
+      }
+    ],
+    "Attendance": [
+      {
+        "method": "PATCH",
+        "path": "/api/v1/attendance/breaks/{breakId}/end",
+        "summary": "End break (Staff)",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "breakId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": "EndBreakRequest"
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/attendance/clock-in",
+        "summary": "Clock in (Staff)",
+        "security": "authenticated",
+        "params": null,
+        "requestBody": "ClockInRequest"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/attendance/date-range",
+        "summary": "Get attendance records within date range (Admin/Manager)",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "startDate",
+            "in": "query",
+            "required": true
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "required": true
+          },
+          {
+            "name": "staffProfileId",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/attendance/date/{date}",
+        "summary": "Get attendance records for a specific date (Admin/Manager)",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "date",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/attendance/reports/daily",
+        "summary": "Get daily attendance report (Admin/Manager)",
+        "security": "authenticated",
+        "params": null,
+        "requestBody": "DailyAttendanceReportRequest"
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/attendance/reports/staff",
+        "summary": "Get staff attendance report (Admin/Manager)",
+        "security": "authenticated",
+        "params": null,
+        "requestBody": "StaffAttendanceReportRequest"
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/attendance/reports/timesheet",
+        "summary": "Get timesheet report (Admin/Manager/Staff)",
+        "security": "authenticated",
+        "params": null,
+        "requestBody": "TimesheetRequest"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/attendance/staff/{staffProfileId}",
+        "summary": "Get attendance records for staff member",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "staffProfileId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/attendance/staff/{staffProfileId}/active",
+        "summary": "Get active attendance record for staff",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "staffProfileId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "PATCH",
+        "path": "/api/v1/attendance/{attendanceId}/clock-out",
+        "summary": "Clock out (Staff)",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "attendanceId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": "ClockOutRequest"
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/attendance/{attendanceId}/start-break",
+        "summary": "Start break (Staff)",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "attendanceId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": "StartBreakRequest"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/attendance/{id}",
+        "summary": "Get attendance record by ID",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      }
+    ],
+    "Authentication": [
+      {
+        "method": "POST",
+        "path": "/api/v1/auth/change-password",
+        "summary": "Change user password",
+        "security": "public",
+        "params": null,
+        "requestBody": "ChangePasswordRequest"
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/auth/login",
+        "summary": "Login with email/username and password",
+        "security": "public",
+        "params": null,
+        "requestBody": "LoginRequest"
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/auth/logout",
+        "summary": "Logout current user",
+        "security": "public",
+        "params": null,
+        "requestBody": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/auth/me",
+        "summary": "Get current user profile",
+        "security": "public",
+        "params": null,
+        "requestBody": null
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/auth/refresh",
+        "summary": "Refresh access token",
+        "security": "public",
+        "params": null,
+        "requestBody": "RefreshTokenRequest"
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/auth/register",
+        "summary": "Register a new user",
+        "security": "public",
+        "params": null,
+        "requestBody": "RegisterRequest"
+      }
+    ],
+    "Blog": [
+      {
+        "method": "GET",
+        "path": "/api/v1/blog/categories",
+        "summary": "Get all categories (public)",
+        "security": "public",
+        "params": null,
+        "requestBody": null
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/blog/categories",
+        "summary": "Create blog category",
+        "security": "authenticated",
+        "params": null,
+        "requestBody": "CreateBlogCategoryRequest"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/blog/posts",
+        "summary": "Get published posts (public)",
+        "security": "public",
+        "params": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/blog/posts",
+        "summary": "Create blog post",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true
+          }
+        ],
+        "requestBody": "CreateBlogPostRequest"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/blog/posts/category/{categoryId}",
+        "summary": "Get posts by category (public)",
+        "security": "public",
+        "params": [
+          {
+            "name": "categoryId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "PUT",
+        "path": "/api/v1/blog/posts/{id}",
+        "summary": "Update blog post",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": "UpdateBlogPostRequest"
+      },
+      {
+        "method": "PATCH",
+        "path": "/api/v1/blog/posts/{id}/publish",
+        "summary": "Publish blog post",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/blog/posts/{postId}/comments",
+        "summary": "Get approved comments for post (public)",
+        "security": "public",
+        "params": [
+          {
+            "name": "postId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/blog/posts/{postId}/comments",
+        "summary": "Add comment to blog post (public or authenticated)",
+        "security": "public",
+        "params": [
+          {
+            "name": "postId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false
+          }
+        ],
+        "requestBody": "CreateBlogCommentRequest"
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/blog/posts/{postId}/images",
+        "summary": "Add image to blog post",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "postId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": "AddBlogPostImageRequest"
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/blog/posts/{postId}/links",
+        "summary": "Add product/service/bundle/promotion link to blog post",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "postId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": "AddBlogPostLinkRequest"
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/blog/posts/{postId}/videos",
+        "summary": "Add video to blog post",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "postId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": "AddBlogPostVideoRequest"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/blog/posts/{slug}",
+        "summary": "View blog post by slug (public)",
+        "security": "public",
+        "params": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/blog/search",
+        "summary": "Search blog posts (public)",
+        "security": "public",
+        "params": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": true
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/blog/tags",
+        "summary": "Get all tags (public)",
+        "security": "public",
+        "params": null,
+        "requestBody": null
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/blog/tags",
+        "summary": "Create blog tag",
+        "security": "authenticated",
+        "params": null,
+        "requestBody": "CreateBlogTagRequest"
+      }
+    ],
+    "Bookings": [
+      {
+        "method": "POST",
+        "path": "/api/v1/bookings",
+        "summary": "Create booking",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true
+          }
+        ],
+        "requestBody": "CreateBookingRequest"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/bookings/my-bookings",
+        "summary": "Get my bookings",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/bookings/upcoming",
+        "summary": "Get upcoming bookings",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/bookings/{id}",
+        "summary": "Get booking details",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/bookings/{id}/cancel",
+        "summary": "Cancel booking",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true
+          }
+        ],
+        "requestBody": "CancelBookingRequest"
+      },
+      {
+        "method": "PATCH",
+        "path": "/api/v1/bookings/{id}/complete",
+        "summary": "Complete booking (staff)",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "staffNotes",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "PATCH",
+        "path": "/api/v1/bookings/{id}/confirm",
+        "summary": "Confirm booking (staff/admin)",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "PATCH",
+        "path": "/api/v1/bookings/{id}/reschedule",
+        "summary": "Reschedule booking",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true
+          }
+        ],
+        "requestBody": "RescheduleBookingRequest"
+      },
+      {
+        "method": "PATCH",
+        "path": "/api/v1/bookings/{id}/start",
+        "summary": "Start booking (staff)",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      }
+    ],
+    "Product Bundles": [
+      {
+        "method": "GET",
+        "path": "/api/v1/bundles",
+        "summary": "Get all bundles (public catalog)",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/bundles",
+        "summary": "Create product bundle",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true
+          }
+        ],
+        "requestBody": "CreateBundleRequest"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/bundles/active",
+        "summary": "Get active bundles (public)",
+        "security": "authenticated",
+        "params": null,
+        "requestBody": null
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/bundles/calculate-price",
+        "summary": "Calculate bundle pricing automatically",
+        "security": "authenticated",
+        "params": null,
+        "requestBody": "CalculateBundlePriceRequest"
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/bundles/{bundleId}/images",
+        "summary": "Add bundle image",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "bundleId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": "AddBundleImageRequest"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/bundles/{id}",
+        "summary": "Get bundle details (public)",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "PUT",
+        "path": "/api/v1/bundles/{id}",
+        "summary": "Update bundle",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": "UpdateBundleRequest"
+      }
+    ],
+    "Shopping Cart": [
+      {
+        "method": "GET",
+        "path": "/api/v1/cart",
+        "summary": "Get current cart (guest or registered)",
+        "security": "public",
+        "params": [
+          {
+            "name": "guestSessionId",
+            "in": "query",
+            "required": false
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "DELETE",
+        "path": "/api/v1/cart/clear",
+        "summary": "Clear entire cart",
+        "security": "public",
+        "params": [
+          {
+            "name": "guestSessionId",
+            "in": "query",
+            "required": false
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/cart/guest",
+        "summary": "Create guest cart explicitly",
+        "security": "public",
+        "params": null,
+        "requestBody": "CreateGuestCartRequest"
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/cart/items",
+        "summary": "Add product to cart",
+        "security": "public",
+        "params": [
+          {
+            "name": "guestSessionId",
+            "in": "query",
+            "required": false
+          }
+        ],
+        "requestBody": "AddToCartRequest"
+      },
+      {
+        "method": "PUT",
+        "path": "/api/v1/cart/items/{itemId}",
+        "summary": "Update cart item quantity",
+        "security": "public",
+        "params": [
+          {
+            "name": "itemId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": "UpdateCartItemRequest"
+      },
+      {
+        "method": "DELETE",
+        "path": "/api/v1/cart/items/{itemId}",
+        "summary": "Remove item from cart",
+        "security": "public",
+        "params": [
+          {
+            "name": "itemId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/cart/merge",
+        "summary": "Merge guest cart into customer cart (after login)",
+        "security": "authenticated",
+        "params": null,
+        "requestBody": "MergeCartsRequest"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/cart/{cartId}/validate",
+        "summary": "Validate cart items (stock, prices, availability)",
+        "security": "public",
+        "params": [
+          {
+            "name": "cartId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      }
+    ],
+    "Category Management": [
+      {
+        "method": "GET",
+        "path": "/api/v1/categories",
+        "summary": "Get all categories",
+        "security": "authenticated",
+        "params": null,
+        "requestBody": null
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/categories",
+        "summary": "Create a new category (Admin/Manager only)",
+        "security": "authenticated",
+        "params": null,
+        "requestBody": "CreateCategoryRequest"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/categories/root",
+        "summary": "Get root categories only (no parent)",
+        "security": "authenticated",
+        "params": null,
+        "requestBody": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/categories/tree",
+        "summary": "Get category tree (hierarchical structure)",
+        "security": "authenticated",
+        "params": null,
+        "requestBody": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/categories/{categoryId}",
+        "summary": "Get category by ID",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "categoryId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "PUT",
+        "path": "/api/v1/categories/{categoryId}",
+        "summary": "Update category (Admin/Manager only)",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "categoryId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": "UpdateCategoryRequest"
+      },
+      {
+        "method": "DELETE",
+        "path": "/api/v1/categories/{categoryId}",
+        "summary": "Delete category (Admin only)",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "categoryId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/categories/{categoryId}/subcategories",
+        "summary": "Get subcategories of a category",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "categoryId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      }
+    ],
+    "Conversations": [
+      {
+        "method": "GET",
+        "path": "/api/v1/conversations",
+        "summary": "Get all conversations",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "required": false
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/conversations",
+        "summary": "Start a new conversation",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true
+          }
+        ],
+        "requestBody": "CreateConversationRequest"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/conversations/unread",
+        "summary": "Get all unread conversations",
+        "security": "authenticated",
+        "params": null,
+        "requestBody": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/conversations/{id}",
+        "summary": "Get conversation with messages",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/conversations/{id}/messages",
+        "summary": "Get paginated message history",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/conversations/{id}/messages",
+        "summary": "Send a message (REST fallback for non-WebSocket clients)",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true
+          }
+        ],
+        "requestBody": "SendMessageRequest"
+      },
+      {
+        "method": "PATCH",
+        "path": "/api/v1/conversations/{id}/read",
+        "summary": "Mark conversation as read",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      }
+    ],
+    "Customer Management": [
+      {
+        "method": "GET",
+        "path": "/api/v1/customers",
+        "summary": "Get all customers (Admin/Manager)",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "PUT",
+        "path": "/api/v1/customers/addresses/{addressId}",
+        "summary": "Update address",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "addressId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": "UpdateCustomerAddressRequest"
+      },
+      {
+        "method": "DELETE",
+        "path": "/api/v1/customers/addresses/{addressId}",
+        "summary": "Delete address",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "addressId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/customers/auth/google",
+        "summary": "Login/Register with Google",
+        "security": "public",
+        "params": null,
+        "requestBody": "GoogleAuthRequest"
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/customers/guest/session",
+        "summary": "Create guest checkout session",
+        "security": "public",
+        "params": null,
+        "requestBody": "GuestSessionRequest"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/customers/guest/session/{sessionId}",
+        "summary": "Get guest customer by session ID",
+        "security": "public",
+        "params": [
+          {
+            "name": "sessionId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/customers/login",
+        "summary": "Customer login",
+        "security": "public",
+        "params": null,
+        "requestBody": "LoginRequest"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/customers/me",
+        "summary": "Get current customer profile",
+        "security": "authenticated",
+        "params": null,
+        "requestBody": null
+      },
+      {
+        "method": "PUT",
+        "path": "/api/v1/customers/me",
+        "summary": "Update current customer profile",
+        "security": "authenticated",
+        "params": null,
+        "requestBody": "UpdateCustomerProfileRequest"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/customers/me/addresses",
+        "summary": "Get customer addresses",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/customers/me/addresses",
+        "summary": "Add new address",
+        "security": "authenticated",
+        "params": null,
+        "requestBody": "CreateCustomerAddressRequest"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/customers/me/addresses/default",
+        "summary": "Get default address",
+        "security": "authenticated",
+        "params": null,
+        "requestBody": null
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/customers/me/change-password",
+        "summary": "Change customer password",
+        "security": "authenticated",
+        "params": null,
+        "requestBody": "ChangePasswordRequest"
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/customers/register",
+        "summary": "Register new customer account",
+        "security": "public",
+        "params": null,
+        "requestBody": "RegisterCustomerRequest"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/customers/{id}",
+        "summary": "Get customer by ID (Admin/Manager)",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      }
+    ],
+    "Customer Analytics": [
+      {
+        "method": "POST",
+        "path": "/api/v1/customers/analytics/budget",
+        "summary": "Set monthly budget cap",
+        "security": "authenticated",
+        "params": null,
+        "requestBody": "SetBudgetCapRequest"
+      },
+      {
+        "method": "DELETE",
+        "path": "/api/v1/customers/analytics/budget",
+        "summary": "Remove budget cap",
+        "security": "authenticated",
+        "params": null,
+        "requestBody": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/customers/analytics/dashboard",
+        "summary": "Get customer dashboard",
+        "security": "authenticated",
+        "params": null,
+        "requestBody": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/customers/analytics/me",
+        "summary": "Get current customer analytics",
+        "security": "authenticated",
+        "params": null,
+        "requestBody": null
+      }
+    ],
+    "Customer Wishlist": [
+      {
+        "method": "GET",
+        "path": "/api/v1/customers/wishlist",
+        "summary": "Get customer wishlist",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/customers/wishlist",
+        "summary": "Add product to wishlist",
+        "security": "authenticated",
+        "params": null,
+        "requestBody": "AddToWishlistRequest"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/customers/wishlist/count",
+        "summary": "Get wishlist item count",
+        "security": "authenticated",
+        "params": null,
+        "requestBody": null
+      },
+      {
+        "method": "DELETE",
+        "path": "/api/v1/customers/wishlist/product/{productId}",
+        "summary": "Remove product from wishlist",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "productId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "PUT",
+        "path": "/api/v1/customers/wishlist/{itemId}",
+        "summary": "Update wishlist item",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "itemId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": "UpdateWishlistItemRequest"
+      },
+      {
+        "method": "DELETE",
+        "path": "/api/v1/customers/wishlist/{itemId}",
+        "summary": "Remove item from wishlist",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "itemId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      }
+    ],
+    "Leave Management": [
+      {
+        "method": "POST",
+        "path": "/api/v1/leave/balances",
+        "summary": "Create leave balance (Admin/Manager)",
+        "security": "authenticated",
+        "params": null,
+        "requestBody": "CreateLeaveBalanceRequest"
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/leave/balances/initialize",
+        "summary": "Initialize leave balances for year (Admin/Manager)",
+        "security": "authenticated",
+        "params": null,
+        "requestBody": "InitializeLeaveBalancesRequest"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/leave/balances/staff/{staffProfileId}",
+        "summary": "Get staff leave balances",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "staffProfileId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "year",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/leave/balances/{id}",
+        "summary": "Get leave balance by ID",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "PUT",
+        "path": "/api/v1/leave/balances/{id}",
+        "summary": "Update leave balance (Admin/Manager)",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": "UpdateLeaveBalanceRequest"
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/leave/requests",
+        "summary": "Create leave request (Staff)",
+        "security": "authenticated",
+        "params": null,
+        "requestBody": "CreateLeaveRequestRequest"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/leave/requests/pending",
+        "summary": "Get pending leave requests (Admin/Manager)",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/leave/requests/staff/{staffProfileId}",
+        "summary": "Get staff leave requests",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "staffProfileId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/leave/requests/{id}",
+        "summary": "Get leave request by ID",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "PATCH",
+        "path": "/api/v1/leave/requests/{id}/approve",
+        "summary": "Approve leave request (Admin/Manager)",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": "ApproveLeaveRequestRequest"
+      },
+      {
+        "method": "PATCH",
+        "path": "/api/v1/leave/requests/{id}/cancel",
+        "summary": "Cancel leave request (Staff/Admin/Manager)",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "PATCH",
+        "path": "/api/v1/leave/requests/{id}/reject",
+        "summary": "Reject leave request (Admin/Manager)",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": "RejectLeaveRequestRequest"
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/leave/summary",
+        "summary": "Get leave summary for staff",
+        "security": "authenticated",
+        "params": null,
+        "requestBody": "LeaveSummaryRequest"
+      }
+    ],
+    "Notifications": [
+      {
+        "method": "GET",
+        "path": "/api/v1/notifications/history",
+        "summary": "Get notification history",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/notifications/preferences",
+        "summary": "Get notification preferences",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "PUT",
+        "path": "/api/v1/notifications/preferences",
+        "summary": "Update notification preferences",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true
+          }
+        ],
+        "requestBody": "UpdateNotificationPreferencesRequest"
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/notifications/queue",
+        "summary": "Queue notification for sending",
+        "security": "authenticated",
+        "params": null,
+        "requestBody": "QueueNotificationRequest"
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/notifications/send/{id}",
+        "summary": "Send notification immediately",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/notifications/templates/email",
+        "summary": "Get email templates",
+        "security": "authenticated",
+        "params": null,
+        "requestBody": null
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/notifications/templates/email",
+        "summary": "Create email template",
+        "security": "authenticated",
+        "params": null,
+        "requestBody": "CreateEmailTemplateRequest"
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/notifications/templates/sms",
+        "summary": "Create SMS template",
+        "security": "authenticated",
+        "params": null,
+        "requestBody": "CreateSmsTemplateRequest"
+      }
+    ],
+    "Orders & Checkout": [
+      {
+        "method": "POST",
+        "path": "/api/v1/orders/checkout",
+        "summary": "Checkout and create order from cart",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "guestSessionId",
+            "in": "query",
+            "required": false
+          }
+        ],
+        "requestBody": "CheckoutRequest"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/orders/my-orders",
+        "summary": "Get current customer orders",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/orders/{id}",
+        "summary": "Get order by ID",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/orders/{id}/cancel",
+        "summary": "Cancel order",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "reason",
+            "in": "query",
+            "required": false
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "PATCH",
+        "path": "/api/v1/orders/{id}/status",
+        "summary": "Update order status (Admin/Manager)",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": "UpdateOrderStatusRequest"
+      }
+    ],
+    "Payments": [
+      {
+        "method": "GET",
+        "path": "/api/v1/payments/flutterwave/callback",
+        "summary": "Flutterwave payment callback",
+        "security": "public",
+        "params": [
+          {
+            "name": "status",
+            "in": "query",
+            "required": true
+          },
+          {
+            "name": "tx_ref",
+            "in": "query",
+            "required": true
+          },
+          {
+            "name": "transaction_id",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/payments/initiate",
+        "summary": "Initiate payment for order",
+        "security": "authenticated",
+        "params": null,
+        "requestBody": "InitiatePaymentRequest"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/payments/paystack/callback",
+        "summary": "Paystack payment callback",
+        "security": "public",
+        "params": [
+          {
+            "name": "trxref",
+            "in": "query",
+            "required": true
+          },
+          {
+            "name": "reference",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/payments/stripe/callback",
+        "summary": "Stripe payment callback",
+        "security": "public",
+        "params": null,
+        "requestBody": null
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/payments/webhook/flutterwave",
+        "summary": "Flutterwave webhook endpoint",
+        "security": "public",
+        "params": null,
+        "requestBody": null
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/payments/webhook/paystack",
+        "summary": "Paystack webhook endpoint",
+        "security": "public",
+        "params": null,
+        "requestBody": null
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/payments/webhook/stripe",
+        "summary": "Stripe webhook endpoint",
+        "security": "public",
+        "params": null,
+        "requestBody": null
+      }
+    ],
+    "Product Management": [
+      {
+        "method": "GET",
+        "path": "/api/v1/products",
+        "summary": "Get all products (paginated)",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/products",
+        "summary": "Create a new product (Admin/Manager only)",
+        "security": "authenticated",
+        "params": null,
+        "requestBody": "CreateProductRequest"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/products/category/{categoryId}",
+        "summary": "Get products by category",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "categoryId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/products/low-stock",
+        "summary": "Get low stock products",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/products/search",
+        "summary": "Search products by name or SKU",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "searchTerm",
+            "in": "query",
+            "required": true
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/products/sku/{sku}",
+        "summary": "Get product by SKU",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "sku",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/products/supplier/{supplierId}",
+        "summary": "Get products by supplier",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "supplierId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/products/{productId}",
+        "summary": "Get product by ID",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "productId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "PUT",
+        "path": "/api/v1/products/{productId}",
+        "summary": "Update product (Admin/Manager only)",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "productId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": "UpdateProductRequest"
+      },
+      {
+        "method": "DELETE",
+        "path": "/api/v1/products/{productId}",
+        "summary": "Delete product (Admin only)",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "productId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      }
+    ],
+    "Product Images": [
+      {
+        "method": "GET",
+        "path": "/api/v1/products/{productId}/images",
+        "summary": "Get all images for a product",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "productId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/products/{productId}/images",
+        "summary": "Upload product image (Admin/Manager only)",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "productId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "isPrimary",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "displayOrder",
+            "in": "query",
+            "required": false
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/products/{productId}/images/primary",
+        "summary": "Get primary image for a product",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "productId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "DELETE",
+        "path": "/api/v1/products/{productId}/images/{imageId}",
+        "summary": "Delete product image (Admin/Manager only)",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "productId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "imageId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "PATCH",
+        "path": "/api/v1/products/{productId}/images/{imageId}/set-primary",
+        "summary": "Set image as primary (Admin/Manager only)",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "productId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "imageId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      }
+    ],
+    "Product Reviews": [
+      {
+        "method": "GET",
+        "path": "/api/v1/products/{productId}/reviews",
+        "summary": "Get approved reviews for a product",
+        "security": "public",
+        "params": [
+          {
+            "name": "productId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/products/{productId}/reviews",
+        "summary": "Submit a review for a product (customer-facing, used by e-commerce side)",
+        "security": "public",
+        "params": [
+          {
+            "name": "productId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": "CreateReviewRequest"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/products/{productId}/reviews/all",
+        "summary": "Get all reviews (including pending) \u2014 admin only",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "productId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/products/{productId}/reviews/summary",
+        "summary": "Get rating summary and breakdown for a product",
+        "security": "public",
+        "params": [
+          {
+            "name": "productId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "DELETE",
+        "path": "/api/v1/products/{productId}/reviews/{reviewId}",
+        "summary": "Delete a review",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "productId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "reviewId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "PATCH",
+        "path": "/api/v1/products/{productId}/reviews/{reviewId}/approve",
+        "summary": "Approve a pending review",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "productId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "reviewId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      }
+    ],
+    "Product Targets": [
+      {
+        "method": "GET",
+        "path": "/api/v1/products/{productId}/target",
+        "summary": "Get the current month's target and progress for a product",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "productId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "year",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "month",
+            "in": "query",
+            "required": false
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/products/{productId}/target",
+        "summary": "Set or update a monthly sales target for a product",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "productId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true
+          }
+        ],
+        "requestBody": "SetProductTargetRequest"
+      }
+    ],
+    "Promotions": [
+      {
+        "method": "GET",
+        "path": "/api/v1/promotions",
+        "summary": "Get all promotions (admin)",
+        "security": "authenticated",
+        "params": null,
+        "requestBody": null
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/promotions",
+        "summary": "Create promotion",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true
+          }
+        ],
+        "requestBody": "CreatePromotionRequest"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/promotions/active",
+        "summary": "Get active promotions (public)",
+        "security": "public",
+        "params": null,
+        "requestBody": null
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/promotions/validate-code",
+        "summary": "Validate promo code (public)",
+        "security": "public",
+        "params": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true
+          }
+        ],
+        "requestBody": "ValidatePromoCodeRequest"
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/promotions/{promotionId}/record-usage",
+        "summary": "Record promotion usage (internal)",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "promotionId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "orderId",
+            "in": "query",
+            "required": true
+          },
+          {
+            "name": "discountAmount",
+            "in": "query",
+            "required": true
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      }
+    ],
+    "Review Moderation": [
+      {
+        "method": "GET",
+        "path": "/api/v1/reviews/pending",
+        "summary": "Get all pending reviews awaiting approval",
+        "security": "authenticated",
+        "params": null,
+        "requestBody": null
+      }
+    ],
+    "Services": [
+      {
+        "method": "GET",
+        "path": "/api/v1/services",
+        "summary": "Get all services (public catalog)",
+        "security": "public",
+        "params": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/services",
+        "summary": "Create service",
+        "security": "authenticated",
+        "params": null,
+        "requestBody": "CreateServiceRequest"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/services/{id}",
+        "summary": "Get service details (public)",
+        "security": "public",
+        "params": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "PUT",
+        "path": "/api/v1/services/{id}",
+        "summary": "Update service",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": "UpdateServiceRequest"
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/services/{serviceId}/addons",
+        "summary": "Add service add-on",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "serviceId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": "CreateServiceAddonRequest"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/services/{serviceId}/available-slots",
+        "summary": "Get available booking slots (public)",
+        "security": "public",
+        "params": [
+          {
+            "name": "serviceId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "request",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/services/{serviceId}/images",
+        "summary": "Add service image",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "serviceId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": "AddServiceImageRequest"
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/services/{serviceId}/staff",
+        "summary": "Assign staff to service",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "serviceId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": "AssignStaffToServiceRequest"
+      }
+    ],
+    "Service Categories": [
+      {
+        "method": "GET",
+        "path": "/api/v1/services/categories",
+        "summary": "Get all active categories (public)",
+        "security": "public",
+        "params": null,
+        "requestBody": null
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/services/categories",
+        "summary": "Create service category",
+        "security": "authenticated",
+        "params": null,
+        "requestBody": "CreateServiceCategoryRequest"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/services/categories/{categoryId}/subcategories",
+        "summary": "Get subcategories (public)",
+        "security": "public",
+        "params": [
+          {
+            "name": "categoryId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/services/categories/{categoryId}/subcategories",
+        "summary": "Create subcategory",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "categoryId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": "CreateServiceSubcategoryRequest"
+      },
+      {
+        "method": "PUT",
+        "path": "/api/v1/services/categories/{id}",
+        "summary": "Update category",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": "UpdateServiceCategoryRequest"
+      }
+    ],
+    "Store Settings": [
+      {
+        "method": "GET",
+        "path": "/api/v1/settings/contact",
+        "summary": "Get store contact info",
+        "security": "public",
+        "params": null,
+        "requestBody": null
+      },
+      {
+        "method": "PUT",
+        "path": "/api/v1/settings/contact",
+        "summary": "Update store contact info",
+        "security": "authenticated",
+        "params": null,
+        "requestBody": "UpdateContactInfoRequest"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/settings/store",
+        "summary": "Get store account info",
+        "security": "public",
+        "params": null,
+        "requestBody": null
+      },
+      {
+        "method": "PUT",
+        "path": "/api/v1/settings/store",
+        "summary": "Update store account info",
+        "security": "authenticated",
+        "params": null,
+        "requestBody": "UpdateStoreAccountRequest"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/settings/website",
+        "summary": "Get website metadata",
+        "security": "authenticated",
+        "params": null,
+        "requestBody": null
+      },
+      {
+        "method": "PUT",
+        "path": "/api/v1/settings/website",
+        "summary": "Update website metadata",
+        "security": "authenticated",
+        "params": null,
+        "requestBody": "UpdateWebsiteInfoRequest"
+      }
+    ],
+    "Staff Shifts": [
+      {
+        "method": "GET",
+        "path": "/api/v1/shifts/staff-shifts",
+        "summary": "Get all staff shifts (Admin/Manager)",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/shifts/staff-shifts",
+        "summary": "Create staff shift assignment (Admin/Manager)",
+        "security": "authenticated",
+        "params": null,
+        "requestBody": "CreateStaffShiftRequest"
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/shifts/staff-shifts/bulk",
+        "summary": "Create multiple staff shifts (Admin/Manager)",
+        "security": "authenticated",
+        "params": null,
+        "requestBody": "BulkCreateStaffShiftsRequest"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/shifts/staff-shifts/date-range",
+        "summary": "Get shifts within a date range (Admin/Manager)",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "startDate",
+            "in": "query",
+            "required": true
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "required": true
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/shifts/staff-shifts/date/{date}",
+        "summary": "Get all shifts for a specific date (Admin/Manager)",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "date",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/shifts/staff-shifts/staff/{staffProfileId}",
+        "summary": "Get shifts for a staff member",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "staffProfileId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/shifts/staff-shifts/staff/{staffProfileId}/upcoming",
+        "summary": "Get upcoming shifts for a staff member",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "staffProfileId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/shifts/staff-shifts/weekly-roster",
+        "summary": "Get weekly roster (Admin/Manager)",
+        "security": "authenticated",
+        "params": null,
+        "requestBody": "WeeklyRosterRequest"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/shifts/staff-shifts/{id}",
+        "summary": "Get staff shift by ID",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "PUT",
+        "path": "/api/v1/shifts/staff-shifts/{id}",
+        "summary": "Update staff shift (Admin/Manager)",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": "UpdateStaffShiftRequest"
+      },
+      {
+        "method": "DELETE",
+        "path": "/api/v1/shifts/staff-shifts/{id}",
+        "summary": "Delete staff shift (Admin only)",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "PATCH",
+        "path": "/api/v1/shifts/staff-shifts/{id}/cancel",
+        "summary": "Cancel staff shift (Admin/Manager)",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      }
+    ],
+    "Shift Swap Requests": [
+      {
+        "method": "GET",
+        "path": "/api/v1/shifts/swap-requests",
+        "summary": "Get all shift swap requests (Admin/Manager)",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/shifts/swap-requests",
+        "summary": "Create shift swap request",
+        "security": "authenticated",
+        "params": null,
+        "requestBody": "CreateShiftSwapRequest"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/shifts/swap-requests/pending",
+        "summary": "Get pending shift swap requests (Admin/Manager)",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/shifts/swap-requests/status/{status}",
+        "summary": "Get shift swap requests by status (Admin/Manager)",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "status",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/shifts/swap-requests/{id}",
+        "summary": "Get shift swap request by ID",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "DELETE",
+        "path": "/api/v1/shifts/swap-requests/{id}",
+        "summary": "Delete shift swap request (Admin only)",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "PATCH",
+        "path": "/api/v1/shifts/swap-requests/{id}/approve",
+        "summary": "Approve shift swap request (Admin/Manager)",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": "ApproveShiftSwapRequest"
+      },
+      {
+        "method": "PATCH",
+        "path": "/api/v1/shifts/swap-requests/{id}/cancel",
+        "summary": "Cancel shift swap request",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "PATCH",
+        "path": "/api/v1/shifts/swap-requests/{id}/reject",
+        "summary": "Reject shift swap request (Admin/Manager)",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": "RejectShiftSwapRequest"
+      }
+    ],
+    "Shift Templates": [
+      {
+        "method": "GET",
+        "path": "/api/v1/shifts/templates",
+        "summary": "Get all shift templates",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/shifts/templates",
+        "summary": "Create shift template (Admin/Manager)",
+        "security": "authenticated",
+        "params": null,
+        "requestBody": "CreateShiftTemplateRequest"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/shifts/templates/active",
+        "summary": "Get active shift templates",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/shifts/templates/type/{type}",
+        "summary": "Get shift templates by type",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "type",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/shifts/templates/{id}",
+        "summary": "Get shift template by ID",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "PUT",
+        "path": "/api/v1/shifts/templates/{id}",
+        "summary": "Update shift template (Admin/Manager)",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": "UpdateShiftTemplateRequest"
+      },
+      {
+        "method": "DELETE",
+        "path": "/api/v1/shifts/templates/{id}",
+        "summary": "Delete shift template (Admin only)",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "PATCH",
+        "path": "/api/v1/shifts/templates/{id}/activate",
+        "summary": "Activate shift template (Admin/Manager)",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "PATCH",
+        "path": "/api/v1/shifts/templates/{id}/deactivate",
+        "summary": "Deactivate shift template (Admin/Manager)",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      }
+    ],
+    "Staff Schedule": [
+      {
+        "method": "GET",
+        "path": "/api/v1/staff/availability",
+        "summary": "Get staff availability",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/staff/availability",
+        "summary": "Set staff availability",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true
+          }
+        ],
+        "requestBody": "SetStaffAvailabilityRequest"
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/staff/blocked-dates",
+        "summary": "Block a date",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true
+          }
+        ],
+        "requestBody": "BlockDateRequest"
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/staff/breaks",
+        "summary": "Add staff break",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true
+          }
+        ],
+        "requestBody": "AddStaffBreakRequest"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/staff/schedule",
+        "summary": "Get staff schedule",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "date",
+            "in": "query",
+            "required": true
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      }
+    ],
+    "Staff Profiles": [
+      {
+        "method": "GET",
+        "path": "/api/v1/staff/profiles",
+        "summary": "Get all staff profiles (Admin/Manager)",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/staff/profiles",
+        "summary": "Create staff profile (Admin/Manager)",
+        "security": "authenticated",
+        "params": null,
+        "requestBody": "CreateStaffProfileRequest"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/staff/profiles/department/{department}",
+        "summary": "Get staff by department (Admin/Manager)",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "department",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/staff/profiles/employee/{employeeId}",
+        "summary": "Get staff profile by employee ID (Admin/Manager)",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "employeeId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/staff/profiles/employment-type/{type}",
+        "summary": "Get staff by employment type (Admin/Manager)",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "type",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/staff/profiles/statistics",
+        "summary": "Get staff statistics (Admin/Manager)",
+        "security": "authenticated",
+        "params": null,
+        "requestBody": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/staff/profiles/status/{status}",
+        "summary": "Get staff by status (Admin/Manager)",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "status",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/staff/profiles/user/{userId}",
+        "summary": "Get staff profile by user ID",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/staff/profiles/{id}",
+        "summary": "Get staff profile by ID (Admin/Manager)",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "PUT",
+        "path": "/api/v1/staff/profiles/{id}",
+        "summary": "Update staff profile (Admin/Manager)",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": "UpdateStaffProfileRequest"
+      },
+      {
+        "method": "DELETE",
+        "path": "/api/v1/staff/profiles/{id}",
+        "summary": "Delete staff profile (Admin only)",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/staff/profiles/{id}/profile-image",
+        "summary": "Upload profile image (Admin/Manager)",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "DELETE",
+        "path": "/api/v1/staff/profiles/{id}/profile-image",
+        "summary": "Delete profile image (Admin/Manager)",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      }
+    ],
+    "Stock Adjustments": [
+      {
+        "method": "GET",
+        "path": "/api/v1/stock-adjustments",
+        "summary": "Get all stock adjustments (paginated)",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/stock-adjustments",
+        "summary": "Create stock adjustment (Admin/Manager/Staff)",
+        "security": "authenticated",
+        "params": null,
+        "requestBody": "CreateStockAdjustmentRequest"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/stock-adjustments/product/{productId}",
+        "summary": "Get stock adjustment history for a product",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "productId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/stock-adjustments/product/{productId}/summary",
+        "summary": "Get stock summary for a product",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "productId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/stock-adjustments/type/{type}",
+        "summary": "Get stock adjustments by type",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "type",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/stock-adjustments/user/{userId}",
+        "summary": "Get stock adjustments by user",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/stock-adjustments/{adjustmentId}",
+        "summary": "Get stock adjustment by ID",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "adjustmentId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      }
+    ],
+    "Supplier Management": [
+      {
+        "method": "GET",
+        "path": "/api/v1/suppliers",
+        "summary": "Get all suppliers",
+        "security": "authenticated",
+        "params": null,
+        "requestBody": null
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/suppliers",
+        "summary": "Create a new supplier (Admin/Manager only)",
+        "security": "authenticated",
+        "params": null,
+        "requestBody": "CreateSupplierRequest"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/suppliers/active",
+        "summary": "Get active suppliers only",
+        "security": "authenticated",
+        "params": null,
+        "requestBody": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/suppliers/{supplierId}",
+        "summary": "Get supplier by ID",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "supplierId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "PUT",
+        "path": "/api/v1/suppliers/{supplierId}",
+        "summary": "Update supplier (Admin/Manager only)",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "supplierId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": "UpdateSupplierRequest"
+      },
+      {
+        "method": "DELETE",
+        "path": "/api/v1/suppliers/{supplierId}",
+        "summary": "Delete supplier (Admin only)",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "supplierId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/suppliers/{supplierId}/products",
+        "summary": "Get products from a supplier",
+        "security": "authenticated",
+        "params": [
+          {
+            "name": "supplierId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false
+          }
+        ],
+        "requestBody": null
+      }
+    ]
+  }
+}

@@ -5,7 +5,17 @@ export interface User {
   firstName: string;
   lastName: string;
   role: 'ADMIN' | 'MANAGER' | 'STAFF';
-  createdAt: string;
+  isActive: boolean;
+  isVerified: boolean;
+  phone?: string;
+  username: string;
+  createdAt?: string;
+}
+export interface Token {
+  accessToken: string;
+  refreshToken: string;
+  expiresIn: number;  
+
 }
 
 export interface LoginRequest {
@@ -14,7 +24,10 @@ export interface LoginRequest {
 }
 
 export interface LoginResponse {
-  token: string;
+  accessToken: string;
+  refreshToken: string;
+  tokenType: string;
+  expiresIn: number;
   user: User;
 }
 

@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Search, Filter, ArrowUpDown, Plus, Grid3x3, List, ChevronDown } from 'lucide-react';
 import { Button } from '@/shared/components/ui/button';
 import { StatCard } from '@/features/dashboard/components/StatCard';
@@ -10,11 +10,17 @@ import { Calendar } from '@/features/services/components/Calendar';
 import { AppointmentModal } from '@/features/services/components/AppointmentModal';
 import { AddServiceModal, ServiceFormData } from '@/features/services/components/AddServiceModal';
 import { CreateOrderModal, OrderFormData } from '@/features/services/components/CreateOrderModal';
-import { mockApi, type DashboardStats, type Category } from '@/shared/lib/mock-api';
-import { servicesApi, type ServiceStats, type Appointment, type ServiceCategory } from '@/shared/lib/services-mock-api';
+import { servicesApi, type ServiceStats, type ServiceCategory, type Appointment } from '@/shared/lib/services-mock-api';
+import { useAdminBookings } from '@/features/services/hooks/useBookings';
 import { Product } from '@/features/products/types/product.types';
+import { Category } from '@/features/categories/types/category.types';
 import { cn } from '@/shared/lib/utils';
 import { useNavigate } from 'react-router-dom';
+
+// Real-API hooks
+import { useDashboard, useSalesByDay } from '@/features/analytics/hooks/useAnalytics';
+import { useProducts } from '@/features/products/hooks/useProducts';
+import { useCategoryTree } from '@/features/categories/hooks/useCategories';
 
 type ViewMode = 'grid' | 'list';
 type TabMode = 'products' | 'services';
@@ -22,13 +28,9 @@ type TabMode = 'products' | 'services';
 export default function DashboardHome() {
   const [activeTab, setActiveTab] = useState<TabMode>('products');
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
-  const [stats, setStats] = useState<DashboardStats | null>(null);
-  const [products, setProducts] = useState<Product[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [expandedCategory, setExpandedCategory] = useState<string | null>('makeup');
+  const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
 
   // Search, Filter, Sort states
   const [searchQuery, setSearchQuery] = useState('');
@@ -41,7 +43,6 @@ export default function DashboardHome() {
 
   // Services states
   const [serviceStats, setServiceStats] = useState<ServiceStats | null>(null);
-  const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [serviceCategories, setServiceCategories] = useState<ServiceCategory[]>([]);
   const [currentCalendarDate, setCurrentCalendarDate] = useState(new Date());
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
@@ -55,89 +56,99 @@ export default function DashboardHome() {
 
   const navigate = useNavigate();
 
+  // ── Real API data ──────────────────────────────────────────────────
+  const { data: dashboard, isLoading: dashboardLoading } = useDashboard();
+  const { data: salesByDay } = useSalesByDay();
+  const { data: products, isLoading: productsLoading } = useProducts();
+  const { data: categoryTree, isLoading: categoriesLoading } = useCategoryTree();
+  const { data: appointments = [] } = useAdminBookings();
+
+  const isProductsTabLoading = dashboardLoading || productsLoading || categoriesLoading;
+
+  // ── Derived stats for stat cards ────────────────────────────────────
+  const bestSellingProduct = dashboard?.topProducts?.[0] ?? null;
+
+  const mostPurchasedDay = useMemo(() => {
+    if (!salesByDay?.length) return null;
+    return salesByDay.reduce(
+      (max, day) => (day.unitsSold > max.unitsSold ? day : max),
+      salesByDay[0]
+    );
+  }, [salesByDay]);
+
+  const outOfStockAlerts = useMemo(
+    () => dashboard?.lowStockAlerts?.filter((a) => a.alertType === 'OUT_OF_STOCK') ?? [],
+    [dashboard]
+  );
+
+  // ── Service tab: load stats + categories from mock; appointments come from real API ─────
   useEffect(() => {
-    loadDashboardData();
-  }, [activeTab]); // Reload when tab changes
+    if (activeTab !== 'services') return;
+    Promise.all([
+      servicesApi.getServiceStats(),
+      servicesApi.getServiceCategories(),
+    ]).then(([stats, cats]) => {
+      setServiceStats(stats);
+      setServiceCategories(cats);
+    });
+  }, [activeTab]);
 
-  const loadDashboardData = async () => {
-    setIsLoading(true);
-    try {
-      if (activeTab === 'products') {
-        const [statsData, productsData, categoriesData] = await Promise.all([
-          mockApi.getDashboardStats(),
-          mockApi.getProducts(),
-          mockApi.getCategories(),
-        ]);
-        setStats(statsData);
-        setProducts(productsData);
-        setCategories(categoriesData);
-      } else {
-        const [serviceStatsData, appointmentsData, serviceCategoriesData] = await Promise.all([
-          servicesApi.getServiceStats(),
-          servicesApi.getAppointments(),
-          servicesApi.getServiceCategories(),
-        ]);
-        setServiceStats(serviceStatsData);
-        setAppointments(appointmentsData);
-        setServiceCategories(serviceCategoriesData);
-      }
-    } catch (error) {
-      console.error('Failed to load dashboard data:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  // ── Products filtering ───────────────────────────────────────────────
+  // Collect all child category IDs for the selected parent
+  const childCategoryIds = useMemo(() => {
+    if (!selectedCategory || !categoryTree) return new Set<string>();
+    const parent = categoryTree.find((c) => c.id === selectedCategory);
+    const childIds = (parent?.children ?? []).map((ch: Category) => ch.id);
+    return new Set<string>(childIds);
+  }, [selectedCategory, categoryTree]);
 
-  // Comprehensive filtering, searching, and sorting with useMemo for performance
   const filteredProducts = useMemo(() => {
-    let result = [...products];
+    let result = [...(products ?? [])];
 
-    // 1. Category filter
-    if (selectedCategory && !selectedSubcategory) {
-      result = result.filter(p => p.categoryId === selectedCategory);
-    }
-
-    // 2. Subcategory filter
+    // Category filter (parent → include self + all children)
     if (selectedSubcategory) {
-      result = result.filter(p => 
-        p.categoryId === selectedCategory && p.subcategory === selectedSubcategory
+      result = result.filter((p) => p.categoryId === selectedSubcategory);
+    } else if (selectedCategory) {
+      result = result.filter(
+        (p) => p.categoryId === selectedCategory || childCategoryIds.has(p.categoryId)
       );
     }
 
-    // 3. Search filter
+    // Search filter
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
-      result = result.filter(p => 
-        p.name.toLowerCase().includes(query) ||
-        p.sku.toLowerCase().includes(query)
+      result = result.filter(
+        (p) =>
+          p.name.toLowerCase().includes(query) ||
+          p.sku.toLowerCase().includes(query)
       );
     }
 
-    // 4. Advanced filters
+    // Advanced filters
     if (filterOptions.minPrice !== undefined) {
-      result = result.filter(p => p.basePrice >= filterOptions.minPrice!);
+      result = result.filter((p) => p.basePrice >= filterOptions.minPrice!);
     }
     if (filterOptions.maxPrice !== undefined) {
-      result = result.filter(p => p.basePrice <= filterOptions.maxPrice!);
+      result = result.filter((p) => p.basePrice <= filterOptions.maxPrice!);
     }
     if (filterOptions.minStock !== undefined) {
-      result = result.filter(p => p.stockQuantity >= filterOptions.minStock!);
+      result = result.filter((p) => p.stockQuantity >= filterOptions.minStock!);
     }
     if (filterOptions.stockStatus && filterOptions.stockStatus !== 'all') {
       switch (filterOptions.stockStatus) {
         case 'in-stock':
-          result = result.filter(p => p.stockQuantity > 50);
+          result = result.filter((p) => p.stockQuantity > 50);
           break;
         case 'low-stock':
-          result = result.filter(p => p.stockQuantity > 0 && p.stockQuantity <= 50);
+          result = result.filter((p) => p.stockQuantity > 0 && p.stockQuantity <= 50);
           break;
         case 'out-of-stock':
-          result = result.filter(p => p.stockQuantity === 0);
+          result = result.filter((p) => p.stockQuantity === 0);
           break;
       }
     }
 
-    // 5. Sort
+    // Sort
     switch (sortOption) {
       case 'name-asc':
         result.sort((a, b) => a.name.localeCompare(b.name));
@@ -160,25 +171,17 @@ export default function DashboardHome() {
     }
 
     return result;
-  }, [products, selectedCategory, selectedSubcategory, searchQuery, filterOptions, sortOption]);
-
-  const toggleCategory = (categoryId: string) => {
-    if (expandedCategory === categoryId) {
-      setExpandedCategory(null);
-    } else {
-      setExpandedCategory(categoryId);
-    }
-  };
+  }, [products, selectedCategory, selectedSubcategory, childCategoryIds, searchQuery, filterOptions, sortOption]);
 
   const handleCategoryClick = (categoryId: string) => {
     setSelectedCategory(categoryId);
     setSelectedSubcategory(null);
-    setExpandedCategory(categoryId); // Auto-expand when selected
+    setExpandedCategory(expandedCategory === categoryId ? null : categoryId);
   };
 
-  const handleSubcategoryClick = (subcategory: string, categoryId: string) => {
-    setSelectedCategory(categoryId); // Make sure category is set
-    setSelectedSubcategory(subcategory);
+  const handleSubcategoryClick = (subId: string, parentId: string) => {
+    setSelectedCategory(parentId);
+    setSelectedSubcategory(subId);
   };
 
   const clearFilters = () => {
@@ -189,54 +192,42 @@ export default function DashboardHome() {
     setSortOption('name-asc');
   };
 
-  const hasActiveFilters = () => {
-    return selectedCategory || 
-           selectedSubcategory || 
-           searchQuery.trim() || 
-           filterOptions.minPrice !== undefined ||
-           filterOptions.maxPrice !== undefined ||
-           filterOptions.minStock !== undefined ||
-           (filterOptions.stockStatus && filterOptions.stockStatus !== 'all');
-  };
+  const hasActiveFilters = () =>
+    Boolean(
+      selectedCategory ||
+        selectedSubcategory ||
+        searchQuery.trim() ||
+        filterOptions.minPrice !== undefined ||
+        filterOptions.maxPrice !== undefined ||
+        filterOptions.minStock !== undefined ||
+        (filterOptions.stockStatus && filterOptions.stockStatus !== 'all')
+    );
 
-  // Filtered appointments for services tab
+  // ── Service tab filtering ────────────────────────────────────────────
   const filteredAppointments = useMemo(() => {
     let result = [...appointments];
 
-    // Filter by service category
     if (selectedServiceCategory) {
-      // Map category ID to service names
       const categoryServiceMap: Record<string, string[]> = {
-        'makeup': ['Make Up'],
-        'nails': ['Nails'],
-        'hair': ['Hair'],
+        makeup: ['Make Up'],
+        nails: ['Nails'],
+        hair: ['Hair'],
       };
-      
-      const serviceNames = categoryServiceMap[selectedServiceCategory] || [];
-      result = result.filter(apt => serviceNames.includes(apt.service));
+      const serviceNames = categoryServiceMap[selectedServiceCategory] ?? [];
+      result = result.filter((apt) => serviceNames.includes(apt.service));
     }
 
-    // Filter by subcategory (we'll need to enhance appointment data to support this)
-    if (selectedServiceSubcategory) {
-      // For now, filter appointments that match the subcategory in some way
-      // In a real app, appointments would have subcategory data
-      result = result.filter(apt => {
-        // This is a placeholder - in production, you'd have apt.subcategory
-        return true; // Keep all for now, can be enhanced
-      });
-    }
-
-    // Search filter
     if (serviceSearchQuery.trim()) {
       const query = serviceSearchQuery.toLowerCase();
-      result = result.filter(apt => 
-        apt.customerName.toLowerCase().includes(query) ||
-        apt.service.toLowerCase().includes(query)
+      result = result.filter(
+        (apt) =>
+          apt.customerName.toLowerCase().includes(query) ||
+          apt.service.toLowerCase().includes(query)
       );
     }
 
     return result;
-  }, [appointments, selectedServiceCategory, selectedServiceSubcategory, serviceSearchQuery]);
+  }, [appointments, selectedServiceCategory, serviceSearchQuery]);
 
   const handleServiceCategoryClick = (categoryId: string) => {
     setSelectedServiceCategory(categoryId);
@@ -255,47 +246,50 @@ export default function DashboardHome() {
     setServiceSearchQuery('');
   };
 
-  const hasActiveServiceFilters = () => {
-    return selectedServiceCategory || selectedServiceSubcategory || serviceSearchQuery.trim();
-  };
+  const hasActiveServiceFilters = () =>
+    Boolean(selectedServiceCategory || selectedServiceSubcategory || serviceSearchQuery.trim());
 
-  // Prepare dropdown options for modals
-  const serviceDropdownOptions = useMemo(() => {
-    return [
+  const serviceDropdownOptions = useMemo(
+    () => [
       { value: 'makeup', label: 'Make Up' },
       { value: 'nails', label: 'Nails' },
       { value: 'hair', label: 'Hair' },
-    ];
-  }, []);
+    ],
+    []
+  );
 
   const subcategoryDropdownOptions = useMemo(() => {
-    const allSubcategories: { value: string; label: string }[] = [];
-    serviceCategories.forEach(cat => {
-      cat.subcategories.forEach(sub => {
-        allSubcategories.push({
+    const all: { value: string; label: string }[] = [];
+    serviceCategories.forEach((cat) => {
+      cat.subcategories.forEach((sub) => {
+        all.push({
           value: `${cat.id}-${sub.toLowerCase().replace(/\s+/g, '-')}`,
           label: `${cat.name} - ${sub}`,
         });
       });
     });
-    return allSubcategories;
+    return all;
   }, [serviceCategories]);
 
   const handleAddService = (data: ServiceFormData) => {
     console.log('Adding new service:', data);
-    // In production, call API to create service
-    // await servicesApi.createService(data);
     alert(`Service "${data.name}" created successfully!`);
   };
 
   const handleCreateOrder = (data: OrderFormData) => {
     console.log('Creating new order:', data);
-    // In production, call API to create appointment
-    // await servicesApi.createAppointment({...});
     alert(`Order created for ${data.clientName} on ${data.date} at ${data.time}`);
   };
 
-  if (isLoading) {
+  // ── Helpers ─────────────────────────────────────────────────────────
+  const getCategoryName = (id: string) =>
+    (categoryTree ?? []).find((c) => c.id === id)?.name ??
+    (categoryTree ?? [])
+      .flatMap((c) => c.children ?? [])
+      .find((ch: Category) => ch.id === id)?.name ??
+    id;
+
+  if (isProductsTabLoading && activeTab === 'products') {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
@@ -311,58 +305,64 @@ export default function DashboardHome() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-         <h1 className="text-l font-bold text-gray-900">
-  Hey Emjay 👋 <span className="text-sm font-normal text-gray-600">- here's what's happing on your store today</span>
-</h1>
-        </div>
-        <div className="hidden lg:block">
-          {/* Search is in the header */}
+          <h1 className="text-l font-bold text-gray-900">
+            Hey Emjay 👋{' '}
+            <span className="text-sm font-normal text-gray-600">
+              - here's what's happening on your store today
+            </span>
+          </h1>
         </div>
       </div>
 
       {/* Stats Cards */}
-         
-          {activeTab === 'products' ? (
-            <>
-            {stats && (
+      {activeTab === 'products' ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <StatCard
+          <StatCard
             label="Best Selling Product"
-            value={stats.bestSellingProduct.name}
-            subtitle={`${stats.bestSellingProduct.unitsSold} Units Sold in the last month`}
-            change={stats.bestSellingProduct.change}
+            value={bestSellingProduct?.productName ?? '—'}
+            subtitle={
+              bestSellingProduct
+                ? `${bestSellingProduct.unitsSold} Units Sold in the last month`
+                : 'No data yet'
+            }
             dropdown
             navigateTo="/analytics/most-purchased-products"
           />
           <StatCard
             label="Inventory Amount"
-            value={stats.inventoryAmount.count}
+            value={products?.length ?? 0}
             subtitle="Items are in the inventory"
-            change={stats.inventoryAmount.change}
             dropdown
             navigateTo="/analytics/total-sales"
           />
           <StatCard
-            label="Most Purchased day"
-            value={stats.mostPurchasedDay.day}
-            subtitle={`${stats.mostPurchasedDay.unitsSold} Units Sold on friday`}
-            change={stats.mostPurchasedDay.change}
+            label="Most Purchased Day"
+            value={mostPurchasedDay?.dayName ?? '—'}
+            subtitle={
+              mostPurchasedDay
+                ? `${mostPurchasedDay.unitsSold} Units Sold on ${mostPurchasedDay.dayName}`
+                : 'No sales data yet'
+            }
             dropdown
             navigateTo="/analytics/most-purchased-day"
           />
           <StatCard
             label="Products out of Stock"
-            value={stats.productsOutOfStock.name}
-            subtitle={`${stats.productsOutOfStock.stock} units in the inventory`}
-            change={stats.productsOutOfStock.change}
+            value={
+              outOfStockAlerts.length > 0
+                ? outOfStockAlerts[0].productName
+                : `${dashboard?.lowStockAlerts?.length ?? 0} low-stock alerts`
+            }
+            subtitle={
+              outOfStockAlerts.length > 0
+                ? `${outOfStockAlerts.length} product(s) out of stock`
+                : 'All products in stock'
+            }
             navigateTo="/analytics/inventory"
           />
-          </div>
-          )}
-          </>
-          ):(
-            <div>
-    {/* Service Stats Cards */}
+        </div>
+      ) : (
+        <div>
           {serviceStats && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
               <StatCard
@@ -380,24 +380,22 @@ export default function DashboardHome() {
                 dropdown
               />
               <StatCard
-                label="Most booked day"
+                label="Most Booked Day"
                 value={serviceStats.mostBookedDay.day}
-                subtitle={`${serviceStats.mostBookedDay.orders} orders on Friday`}
+                subtitle={`${serviceStats.mostBookedDay.orders} orders on ${serviceStats.mostBookedDay.day}`}
                 change={serviceStats.mostBookedDay.change}
                 dropdown
               />
               <StatCard
-                label="Service with the lowest orders"
+                label="Service with Lowest Orders"
                 value={serviceStats.lowestOrders.name}
-                subtitle={`${serviceStats.lowestOrders.orders} Orders in the inventory`}
+                subtitle={`${serviceStats.lowestOrders.orders} Orders`}
                 change={serviceStats.lowestOrders.change}
               />
             </div>
           )}
-            </div>
-          )}
-        
-      
+        </div>
+      )}
 
       {/* Tabs */}
       <div className="flex items-center gap-4 border-b border-gray-200">
@@ -428,10 +426,9 @@ export default function DashboardHome() {
       {/* Products Tab Content */}
       {activeTab === 'products' && (
         <div className="flex gap-6">
-          {/* Categories Sidebar */}
+          {/* Categories Sidebar — uses real category tree */}
           <div className="hidden lg:block w-64 flex-shrink-0">
             <div className="space-y-1">
-              {/* All Products Option */}
               <button
                 onClick={clearFilters}
                 className={cn(
@@ -444,48 +441,47 @@ export default function DashboardHome() {
                 All Products
               </button>
 
-              {/* Category List */}
-              {categories.map((category) => (
-                <div key={category.id}>
-                  <button
-                    onClick={() => handleCategoryClick(category.id)}
-                    className={cn(
-                      'w-full text-left px-4 py-2 text-sm font-semibold rounded-md flex items-center justify-between transition-colors',
-                      selectedCategory === category.id && !selectedSubcategory
-                        ? 'bg-[#F5E6EC] text-primary border-r-4 border-primary'
-                        : 'text-gray-900 hover:bg-gray-50'
-                    )}
-                  >
-                    {category.name}
-                    {category.subcategories && (
-                      <ChevronDown
-                        className={cn(
-                          'w-4 h-4 transition-transform duration-200',
-                          expandedCategory === category.id && 'rotate-180'
-                        )}
-                      />
-                    )}
-                  </button>
-                  {expandedCategory === category.id && category.subcategories && (
-                    <div className="ml-4 mt-1 space-y-1 animate-in slide-in-from-top-2 duration-200">
-                      {category.subcategories.map((sub) => (
-                        <button
-                          key={sub}
-                          onClick={() => handleSubcategoryClick(sub, category.id)}
+              {(categoryTree ?? [])
+                .filter((c) => !c.parentCategoryId) // only root categories
+                .map((category) => (
+                  <div key={category.id}>
+                    <button
+                      onClick={() => handleCategoryClick(category.id)}
+                      className={cn(
+                        'w-full text-left px-4 py-2 text-sm font-semibold rounded-md flex items-center justify-between transition-colors',
+                        selectedCategory === category.id && !selectedSubcategory
+                          ? 'bg-[#F5E6EC] text-primary border-r-4 border-primary'
+                          : 'text-gray-900 hover:bg-gray-50'
+                      )}
+                    >
+                      {category.name}
+                      {(category.children?.length ?? 0) > 0 && (
+                        <ChevronDown
                           className={cn(
-                            'block w-full text-left px-4 py-2 text-sm rounded-md transition-colors',
-                            selectedSubcategory === sub && selectedCategory === category.id
+                            'w-4 h-4 transition-transform duration-200',
+                            expandedCategory === category.id && 'rotate-180'
+                          )}
+                        />
+                      )}
+                    </button>
+
+                    {expandedCategory === category.id &&
+                      (category.children ?? []).map((child: Category) => (
+                        <button
+                          key={child.id}
+                          onClick={() => handleSubcategoryClick(child.id, category.id)}
+                          className={cn(
+                            'block w-full text-left ml-4 px-4 py-2 text-sm rounded-md transition-colors',
+                            selectedSubcategory === child.id && selectedCategory === category.id
                               ? 'bg-[#F5E6EC] text-primary font-medium'
                               : 'text-gray-600 hover:text-primary hover:bg-gray-50'
                           )}
                         >
-                          {sub}
+                          {child.name}
                         </button>
                       ))}
-                    </div>
-                  )}
-                </div>
-              ))}
+                  </div>
+                ))}
             </div>
           </div>
 
@@ -495,14 +491,13 @@ export default function DashboardHome() {
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
                 <h2 className="text-xl font-semibold text-gray-900">Products</h2>
-                {/* Active Filter Indicator */}
                 {hasActiveFilters() && (
                   <div className="flex items-center gap-2">
                     <span className="text-sm text-gray-600">
-                      {selectedSubcategory 
-                        ? `Showing: ${selectedSubcategory}` 
-                        : selectedCategory 
-                        ? `Showing: ${categories.find(c => c.id === selectedCategory)?.name}` 
+                      {selectedSubcategory
+                        ? `Showing: ${getCategoryName(selectedSubcategory)}`
+                        : selectedCategory
+                        ? `Showing: ${getCategoryName(selectedCategory)}`
                         : searchQuery
                         ? `Search: "${searchQuery}"`
                         : 'Filtered'}
@@ -516,9 +511,11 @@ export default function DashboardHome() {
                   </div>
                 )}
                 <span className="text-sm text-gray-500">
-                  ({filteredProducts.length} {filteredProducts.length === 1 ? 'product' : 'products'})
+                  ({filteredProducts.length}{' '}
+                  {filteredProducts.length === 1 ? 'product' : 'products'})
                 </span>
               </div>
+
               <div className="flex items-center gap-3">
                 {/* View Toggle */}
                 <div className="flex items-center bg-white border border-gray-200 rounded-md">
@@ -558,19 +555,25 @@ export default function DashboardHome() {
 
                 {/* Filter */}
                 <div className="relative">
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     size="sm"
                     onClick={() => setIsFilterModalOpen(true)}
                     className={cn(
-                      hasActiveFilters() && filterOptions.minPrice !== undefined || filterOptions.maxPrice !== undefined || filterOptions.minStock !== undefined || (filterOptions.stockStatus && filterOptions.stockStatus !== 'all')
+                      filterOptions.minPrice !== undefined ||
+                        filterOptions.maxPrice !== undefined ||
+                        filterOptions.minStock !== undefined ||
+                        (filterOptions.stockStatus && filterOptions.stockStatus !== 'all')
                         ? 'border-primary text-primary'
                         : ''
                     )}
                   >
                     <Filter className="w-4 h-4 mr-2" />
                     Filter
-                    {(filterOptions.minPrice !== undefined || filterOptions.maxPrice !== undefined || filterOptions.minStock !== undefined || (filterOptions.stockStatus && filterOptions.stockStatus !== 'all')) && (
+                    {(filterOptions.minPrice !== undefined ||
+                      filterOptions.maxPrice !== undefined ||
+                      filterOptions.minStock !== undefined ||
+                      (filterOptions.stockStatus && filterOptions.stockStatus !== 'all')) && (
                       <span className="ml-2 w-2 h-2 bg-primary rounded-full"></span>
                     )}
                   </Button>
@@ -578,8 +581,8 @@ export default function DashboardHome() {
 
                 {/* Sort */}
                 <div className="relative">
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     size="sm"
                     onClick={() => setIsSortMenuOpen(!isSortMenuOpen)}
                   >
@@ -595,7 +598,11 @@ export default function DashboardHome() {
                 </div>
 
                 {/* Add Item */}
-                <Button size="sm" className="bg-primary text-white hover:bg-primary/90" onClick={() => navigate('/products/add')}>
+                <Button
+                  size="sm"
+                  className="bg-primary text-white hover:bg-primary/90"
+                  onClick={() => navigate('/products/add')}
+                >
                   <Plus className="w-4 h-4 mr-2" />
                   Add Item
                 </Button>
@@ -618,10 +625,10 @@ export default function DashboardHome() {
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">No products found</h3>
                 <p className="text-gray-600 mb-4">
-                  {selectedSubcategory 
-                    ? `No products in ${selectedSubcategory} category`
+                  {selectedSubcategory
+                    ? `No products in ${getCategoryName(selectedSubcategory)}`
                     : selectedCategory
-                    ? `No products in ${categories.find(c => c.id === selectedCategory)?.name} category`
+                    ? `No products in ${getCategoryName(selectedCategory)}`
                     : 'Try adjusting your filters'}
                 </p>
                 <Button variant="outline" onClick={clearFilters}>
@@ -631,9 +638,9 @@ export default function DashboardHome() {
             ) : (
               <div className="transition-all duration-300">
                 {viewMode === 'grid' ? (
-                  <ProductGrid products={filteredProducts} />
+                  <ProductGrid products={filteredProducts as Product[]} />
                 ) : (
-                  <ProductTable products={filteredProducts} />
+                  <ProductTable products={filteredProducts as Product[]} />
                 )}
               </div>
             )}
@@ -644,13 +651,10 @@ export default function DashboardHome() {
       {/* Services Tab Content */}
       {activeTab === 'services' && (
         <>
-    
-
           <div className="flex gap-6">
             {/* Service Categories Sidebar */}
             <div className="hidden lg:block w-64 flex-shrink-0">
               <div className="space-y-1">
-                {/* All Services Option */}
                 <button
                   onClick={clearServiceFilters}
                   className={cn(
@@ -663,7 +667,6 @@ export default function DashboardHome() {
                   All Services
                 </button>
 
-                {/* Service Category List */}
                 {serviceCategories.map((category) => (
                   <div key={category.id}>
                     <button
@@ -693,7 +696,8 @@ export default function DashboardHome() {
                             onClick={() => handleServiceSubcategoryClick(sub, category.id)}
                             className={cn(
                               'block w-full text-left px-4 py-2 text-sm rounded-md transition-colors',
-                              selectedServiceSubcategory === sub && selectedServiceCategory === category.id
+                              selectedServiceSubcategory === sub &&
+                                selectedServiceCategory === category.id
                                 ? 'bg-[#F5E6EC] text-primary font-medium'
                                 : 'text-gray-600 hover:text-primary hover:bg-gray-50'
                             )}
@@ -710,18 +714,16 @@ export default function DashboardHome() {
 
             {/* Calendar Content */}
             <div className="flex-1">
-              {/* Toolbar */}
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
                   <h2 className="text-xl font-semibold text-gray-900">Your Appointments</h2>
-                  {/* Active Filter Indicator */}
                   {hasActiveServiceFilters() && (
                     <div className="flex items-center gap-2">
                       <span className="text-sm text-gray-600">
-                        {selectedServiceSubcategory 
-                          ? `Showing: ${selectedServiceSubcategory}` 
-                          : selectedServiceCategory 
-                          ? `Showing: ${serviceCategories.find(c => c.id === selectedServiceCategory)?.name}` 
+                        {selectedServiceSubcategory
+                          ? `Showing: ${selectedServiceSubcategory}`
+                          : selectedServiceCategory
+                          ? `Showing: ${serviceCategories.find((c) => c.id === selectedServiceCategory)?.name}`
                           : serviceSearchQuery
                           ? `Search: "${serviceSearchQuery}"`
                           : 'Filtered'}
@@ -735,11 +737,11 @@ export default function DashboardHome() {
                     </div>
                   )}
                   <span className="text-sm text-gray-500">
-                    ({filteredAppointments.length} {filteredAppointments.length === 1 ? 'appointment' : 'appointments'})
+                    ({filteredAppointments.length}{' '}
+                    {filteredAppointments.length === 1 ? 'appointment' : 'appointments'})
                   </span>
                 </div>
                 <div className="flex items-center gap-3">
-                  {/* Search */}
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                     <input
@@ -750,21 +752,17 @@ export default function DashboardHome() {
                       className="pl-10 pr-4 py-2 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent w-56"
                     />
                   </div>
-
-                  {/* Add Service */}
-                  <Button 
-                    size="sm" 
-                    variant="outline" 
+                  <Button
+                    size="sm"
+                    variant="outline"
                     className="border-primary text-primary hover:bg-primary/10"
                     onClick={() => setIsAddServiceModalOpen(true)}
                   >
                     <Plus className="w-4 h-4 mr-2" />
                     Add a Service
                   </Button>
-
-                  {/* Create Order */}
-                  <Button 
-                    size="sm" 
+                  <Button
+                    size="sm"
                     className="bg-primary hover:bg-primary/90"
                     onClick={() => setIsCreateOrderModalOpen(true)}
                   >
@@ -774,7 +772,6 @@ export default function DashboardHome() {
                 </div>
               </div>
 
-              {/* Calendar */}
               <Calendar
                 appointments={filteredAppointments}
                 currentDate={currentCalendarDate}
@@ -787,22 +784,17 @@ export default function DashboardHome() {
             </div>
           </div>
 
-          {/* Appointment Modal */}
           <AppointmentModal
             isOpen={isAppointmentModalOpen}
             onClose={() => setIsAppointmentModalOpen(false)}
             appointment={selectedAppointment}
           />
-
-          {/* Add Service Modal */}
           <AddServiceModal
             isOpen={isAddServiceModalOpen}
             onClose={() => setIsAddServiceModalOpen(false)}
             onSubmit={handleAddService}
             categories={subcategoryDropdownOptions}
           />
-
-          {/* Create Order Modal */}
           <CreateOrderModal
             isOpen={isCreateOrderModalOpen}
             onClose={() => setIsCreateOrderModalOpen(false)}
