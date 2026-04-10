@@ -3,6 +3,7 @@ import {
   Product,
   BackendProductResponse,
   ProductPageResponse,
+  ProductImageInfo,
   CreateProductDto,
   UpdateProductDto,
   ProductFilters,
@@ -22,7 +23,6 @@ function mapProduct(r: BackendProductResponse): Product {
     costPrice: r.costPrice,
     stockQuantity: r.stockQuantity,
     reorderLevel: r.minStockThreshold,
-    unit: 'PCS',                     // unit not in ProductResponse; sensible default
     isActive: r.status === 'ACTIVE',
     imageUrl: primaryImage?.imageUrl,
     createdAt: '',
@@ -72,6 +72,11 @@ export const productsApi = {
     return mapProduct(raw as unknown as BackendProductResponse);
   },
 
+  /** Returns the full raw backend response — use this on the detail page where all images are needed */
+  getByIdFull: async (id: string): Promise<BackendProductResponse> => {
+    return apiClient.get<BackendProductResponse>(`/products/${id}`) as unknown as BackendProductResponse;
+  },
+
   create: async (data: CreateProductDto): Promise<Product> => {
     const payload = toBackendCreateRequest(data);
     const raw = await apiClient.post<BackendProductResponse>('/products', payload);
@@ -98,14 +103,29 @@ export const productsApi = {
   uploadImage: async (
     productId: string,
     file: File,
-    isPrimary = true,
+    isPrimary = false,
     displayOrder = 0
-  ): Promise<{ imageUrl: string }> => {
+  ): Promise<ProductImageInfo> => {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('isPrimary', String(isPrimary));
     formData.append('displayOrder', String(displayOrder));
-    // Passing FormData — Axios will automatically set Content-Type: multipart/form-data
-    return apiClient.post<{ imageUrl: string }>(`/products/${productId}/images`, formData);
+    return apiClient.post<ProductImageInfo>(`/products/${productId}/images`, formData);
   },
+
+  /** Get all images for a product */
+  getImages: async (productId: string): Promise<ProductImageInfo[]> => {
+    return apiClient.get<ProductImageInfo[]>(`/products/${productId}/images`);
+  },
+
+  /** Promote an image to primary */
+  setPrimaryImage: async (productId: string, imageId: string): Promise<ProductImageInfo> => {
+    return apiClient.patch<ProductImageInfo>(
+      `/products/${productId}/images/${imageId}/set-primary`
+    );
+  },
+
+  /** Delete a product image */
+  deleteImage: (productId: string, imageId: string): Promise<void> =>
+    apiClient.delete(`/products/${productId}/images/${imageId}`),
 };

@@ -12,13 +12,19 @@ export interface Product {
   costPrice?: number;
   stockQuantity: number;
   reorderLevel: number; // maps from backend minStockThreshold
-  unit: string;
   weight?: number;
   weightUnit?: string;
   isActive: boolean;    // derived from backend status === 'ACTIVE'
   imageUrl?: string;    // first primary image url
   createdAt: string;
   updatedAt: string;
+}
+
+export interface ProductImageInfo {
+  id: string;
+  imageUrl: string;
+  isPrimary: boolean;
+  displayOrder: number;
 }
 
 /** Raw shape returned by GET /products (backend ProductResponse) */
@@ -28,6 +34,7 @@ export interface BackendProductResponse {
   name: string;
   description?: string;
   categoryId: string;
+  categoryName?: string;
   supplierId?: string;
   retailPrice: number;
   wholesalePrice?: number;
@@ -40,7 +47,8 @@ export interface BackendProductResponse {
   isOutOfStock: boolean;
   profitMargin: number;
   totalValue: number;
-  images: Array<{ id: string; imageUrl: string; isPrimary: boolean; displayOrder: number }>;
+  createdAt?: string;
+  images: ProductImageInfo[];
 }
 
 /** Paginated wrapper from GET /products */
@@ -62,7 +70,6 @@ export interface CreateProductDto {
   costPrice?: number;
   stockQuantity: number;
   reorderLevel: number;
-  unit: string;
   weight?: number;
   weightUnit?: string;
 }

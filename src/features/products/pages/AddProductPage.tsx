@@ -8,6 +8,7 @@ import { useCategories } from '@/features/categories/hooks/useCategories';
 import { useActiveSuppliers } from '@/features/suppliers/hooks/useSuppliers';
 import { useCreateProduct } from '../hooks/useCreateProduct';
 import { productsApi } from '../api/products.api';
+import { apiClient } from '@/shared/lib/api-client';
 
 interface FormData {
   name: string;
@@ -18,6 +19,7 @@ interface FormData {
   costPrice: string;
   sellingPrice: string;
   unitAmount: string;
+  reorderLevel: string;
   hasDiscount: boolean;
   discountPercentage: string;
   promoStartDate: string;
@@ -33,6 +35,7 @@ const emptyForm: FormData = {
   costPrice: '',
   sellingPrice: '',
   unitAmount: '',
+  reorderLevel: '10',
   hasDiscount: false,
   discountPercentage: '',
   promoStartDate: '',
@@ -75,7 +78,20 @@ export default function AddProductPage() {
       setFormError('Please enter a valid selling price.'); return;
     }
     if (!formData.unitAmount || isNaN(Number(formData.unitAmount))) {
-      setFormError('Please enter a valid unit amount.'); return;
+      setFormError('Please enter a valid opening stock quantity.'); return;
+    }
+    if (!formData.reorderLevel || isNaN(Number(formData.reorderLevel)) || Number(formData.reorderLevel) < 0) {
+      setFormError('Please enter a valid reorder level.'); return;
+    }
+    if (formData.hasDiscount) {
+      if (!formData.discountPercentage || isNaN(Number(formData.discountPercentage))) {
+        setFormError('Please enter a valid discount percentage.'); return;
+      }
+      if (!formData.promoStartDate) { setFormError('Please enter a promo start date.'); return; }
+      if (!formData.promoEndDate) { setFormError('Please enter a promo end date.'); return; }
+      if (new Date(formData.promoEndDate) <= new Date(formData.promoStartDate)) {
+        setFormError('Promo end date must be after the start date.'); return;
+      }
     }
 
     createProduct(
@@ -88,20 +104,36 @@ export default function AddProductPage() {
         basePrice: Number(formData.sellingPrice),
         costPrice: Number(formData.costPrice),
         stockQuantity: Number(formData.unitAmount),
-        reorderLevel: 10,
-        unit: 'PCS',
+        reorderLevel: Number(formData.reorderLevel),
       },
       {
         onSuccess: async (newProduct) => {
-          // Upload image if user selected one
+          // 1. Upload image if selected
           if (imageFile && newProduct?.id) {
             try {
               await productsApi.uploadImage(newProduct.id, imageFile, true, 0);
             } catch {
-              // Image upload failed — product was created; navigate anyway
               console.warn('Image upload failed, but product was created successfully.');
             }
           }
+
+          // 2. Create promotion if discount fields are filled
+          if (formData.hasDiscount && newProduct?.id) {
+            try {
+              await apiClient.post('/promotions', {
+                name: `${formData.name.trim()} — ${formData.discountPercentage}% Off`,
+                promotionType: 'PERCENTAGE_DISCOUNT',
+                discountValue: Number(formData.discountPercentage),
+                appliesTo: 'PRODUCTS',
+                productIds: [newProduct.id],
+                startDate: `${formData.promoStartDate}T00:00:00`,
+                endDate: `${formData.promoEndDate}T23:59:59`,
+              });
+            } catch {
+              console.warn('Promotion creation failed, but product was created successfully.');
+            }
+          }
+
           navigate('/products');
         },
         onError: (error: unknown) => {
@@ -270,12 +302,12 @@ export default function AddProductPage() {
                   </div>
                   <div className="text-center">
                     <p className="text-sm text-gray-600 mb-1">Drop files here or choose a file</p>
-                    <p className="text-xs text-gray-500">Upload .jpg or .png, max size 10MB</p>
+                    <p className="text-xs text-gray-500">Upload .jpg or .png, max size 5MB</p>
                   </div>
                   <input
                     type="file"
                     id="imageUpload"
-                    accept="image/*"
+                    accept="image/jpeg,image/jpg,image/png,image/webp"
                     onChange={handleImageChange}
                     className="hidden"
                   />
@@ -306,21 +338,39 @@ export default function AddProductPage() {
             )}
           </div>
 
-          {/* Unit Amount */}
-          <div className="space-y-2">
-            <Label htmlFor="unitAmount" className="text-base font-semibold text-gray-900">
-              Opening Stock (units) <span className="text-red-500">*</span>
-            </Label>
-            <Input
-              id="unitAmount"
-              type="number"
-              min="0"
-              placeholder="How many units are you adding to inventory"
-              value={formData.unitAmount}
-              onChange={(e) => setFormData({ ...formData, unitAmount: e.target.value })}
-              className="h-12"
-              required
-            />
+          {/* Stock row */}
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="unitAmount" className="text-base font-semibold text-gray-900">
+                Opening Stock (units) <span className="text-red-500">*</span>
+              </Label>
+              <Input
+                id="unitAmount"
+                type="number"
+                min="0"
+                placeholder="How many units in stock"
+                value={formData.unitAmount}
+                onChange={(e) => setFormData({ ...formData, unitAmount: e.target.value })}
+                className="h-12"
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="reorderLevel" className="text-base font-semibold text-gray-900">
+                Reorder Level <span className="text-red-500">*</span>
+              </Label>
+              <Input
+                id="reorderLevel"
+                type="number"
+                min="0"
+                placeholder="Low-stock alert threshold"
+                value={formData.reorderLevel}
+                onChange={(e) => setFormData({ ...formData, reorderLevel: e.target.value })}
+                className="h-12"
+                required
+              />
+              <p className="text-xs text-gray-500">Alert when stock falls below this number</p>
+            </div>
           </div>
 
           {/* Discount section */}
@@ -341,7 +391,7 @@ export default function AddProductPage() {
               <div className="space-y-4 pl-8 animate-in slide-in-from-top-2 duration-200">
                 <div className="space-y-2">
                   <Label htmlFor="discountPercentage" className="text-base font-semibold text-gray-900">
-                    Discount Percentage (%)
+                    Discount Percentage (%) <span className="text-red-500">*</span>
                   </Label>
                   <Input
                     id="discountPercentage"
@@ -355,23 +405,32 @@ export default function AddProductPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-base font-semibold text-gray-900">Promo Duration</Label>
+                  <Label className="text-base font-semibold text-gray-900">
+                    Promo Duration <span className="text-red-500">*</span>
+                  </Label>
                   <div className="grid grid-cols-2 gap-4">
-                    <Input
-                      type="date"
-                      placeholder="Start Date"
-                      value={formData.promoStartDate}
-                      onChange={(e) => setFormData({ ...formData, promoStartDate: e.target.value })}
-                      className="h-12"
-                    />
-                    <Input
-                      type="date"
-                      placeholder="End Date"
-                      value={formData.promoEndDate}
-                      onChange={(e) => setFormData({ ...formData, promoEndDate: e.target.value })}
-                      className="h-12"
-                    />
+                    <div className="space-y-1">
+                      <p className="text-xs text-gray-500">Start Date</p>
+                      <Input
+                        type="date"
+                        value={formData.promoStartDate}
+                        onChange={(e) => setFormData({ ...formData, promoStartDate: e.target.value })}
+                        className="h-12"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-xs text-gray-500">End Date</p>
+                      <Input
+                        type="date"
+                        value={formData.promoEndDate}
+                        onChange={(e) => setFormData({ ...formData, promoEndDate: e.target.value })}
+                        className="h-12"
+                      />
+                    </div>
                   </div>
+                  <p className="text-xs text-gray-500">
+                    A promotion will be automatically created and linked to this product.
+                  </p>
                 </div>
               </div>
             )}
