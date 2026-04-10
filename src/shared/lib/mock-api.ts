@@ -17,7 +17,7 @@ const mockProducts: Product[] = [
     costPrice: 35000,
     stockQuantity: 150,
     reorderLevel: 30,
-    unit: 'piece',
+    ////unit: 'piece',
     categoryId: 'makeup',
     subcategory: 'Foundations',
     imageUrl: 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=400',
@@ -33,7 +33,7 @@ const mockProducts: Product[] = [
     costPrice: 60000,
     stockQuantity: 300,
     reorderLevel: 50,
-    unit: 'piece',
+    ////unit: 'piece',
     categoryId: 'makeup',
     subcategory: 'Concealers & Color Correctors',
     imageUrl: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400',
@@ -49,7 +49,7 @@ const mockProducts: Product[] = [
     costPrice: 25000,
     stockQuantity: 200,
     reorderLevel: 40,
-    unit: 'piece',
+    //unit: 'piece',
     categoryId: 'makeup',
     subcategory: 'Powder',
     imageUrl: 'https://images.unsplash.com/photo-1631214524020-7e18db7a8f86?w=400',
@@ -65,7 +65,7 @@ const mockProducts: Product[] = [
     costPrice: 80000,
     stockQuantity: 300,
     reorderLevel: 50,
-    unit: 'piece',
+    //unit: 'piece',
     categoryId: 'makeup',
     subcategory: 'Lipstick',
     imageUrl: 'https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=400',
@@ -81,7 +81,7 @@ const mockProducts: Product[] = [
     costPrice: 18000,
     stockQuantity: 250,
     reorderLevel: 50,
-    unit: 'piece',
+    // //unit: 'piece',
     categoryId: 'makeup',
     subcategory: 'Eyeliner & Kajal',
     imageUrl: 'https://images.unsplash.com/photo-1512496015851-a90fb38ba796?w=400',
@@ -97,7 +97,7 @@ const mockProducts: Product[] = [
     costPrice: 32000,
     stockQuantity: 180,
     reorderLevel: 35,
-    unit: 'piece',
+    // //unit: 'piece',
     categoryId: 'makeup',
     subcategory: 'Mascara',
     imageUrl: 'https://images.unsplash.com/photo-1631730486572-226d1f595b68?w=400',
@@ -115,7 +115,7 @@ const mockProducts: Product[] = [
     costPrice: 90000,
     stockQuantity: 100,
     reorderLevel: 20,
-    unit: 'piece',
+    // //unit: 'piece',
     categoryId: 'fragrances',
     subcategory: "Women's",
     imageUrl: 'https://images.unsplash.com/photo-1541643600914-78b084683601?w=400',
@@ -131,7 +131,7 @@ const mockProducts: Product[] = [
     costPrice: 60000,
     stockQuantity: 300,
     reorderLevel: 50,
-    unit: 'piece',
+    // //unit: 'piece',
     categoryId: 'fragrances',
     subcategory: "Men's",
     imageUrl: 'https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?w=400',
@@ -147,7 +147,7 @@ const mockProducts: Product[] = [
     costPrice: 110000,
     stockQuantity: 80,
     reorderLevel: 15,
-    unit: 'piece',
+    // //unit: 'piece',
     categoryId: 'fragrances',
     subcategory: "Men's",
     imageUrl: 'https://images.unsplash.com/photo-1585386959984-a4155224a1ad?w=400',
@@ -165,7 +165,7 @@ const mockProducts: Product[] = [
     costPrice: 45000,
     stockQuantity: 120,
     reorderLevel: 25,
-    unit: 'piece',
+    //unit: 'piece',
     categoryId: 'personal-care',
     subcategory: 'Skincare',
     imageUrl: 'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=400',
@@ -181,7 +181,7 @@ const mockProducts: Product[] = [
     costPrice: 28000,
     stockQuantity: 200,
     reorderLevel: 40,
-    unit: 'piece',
+    //unit: 'piece',
     categoryId: 'personal-care',
     subcategory: 'Sunscreens & Tanning Products',
     imageUrl: 'https://images.unsplash.com/photo-1556228720-195a672e8a03?w=400',
@@ -197,7 +197,7 @@ const mockProducts: Product[] = [
     costPrice: 12000,
     stockQuantity: 350,
     reorderLevel: 70,
-    unit: 'piece',
+    //unit: 'piece',
     categoryId: 'personal-care',
     subcategory: 'Deodorants & Antiperspirants',
     imageUrl: 'https://images.unsplash.com/photo-1615634260167-c8cdede054de?w=400',
@@ -213,7 +213,7 @@ const mockProducts: Product[] = [
     costPrice: 5000,
     stockQuantity: 500,
     reorderLevel: 100,
-    unit: 'piece',
+    //unit: 'piece',
     categoryId: 'personal-care',
     subcategory: 'Lip Care',
     imageUrl: 'https://images.unsplash.com/photo-1591360236480-4ed861025fa1?w=400',
@@ -231,7 +231,7 @@ const mockProducts: Product[] = [
     costPrice: 8000,
     stockQuantity: 400,
     reorderLevel: 80,
-    unit: 'piece',
+    //unit: 'piece',
     categoryId: 'oral-care',
     subcategory: 'Toothpaste',
     imageUrl: 'https://images.unsplash.com/photo-1622654862202-f85d4e92c028?w=400',
@@ -247,7 +247,7 @@ const mockProducts: Product[] = [
     costPrice: 25000,
     stockQuantity: 100,
     reorderLevel: 20,
-    unit: 'piece',
+    //unit: 'piece',
     categoryId: 'oral-care',
     subcategory: 'Toothbrush',
     imageUrl: 'https://images.unsplash.com/photo-1607613009820-a29f7bb81c04?w=400',
@@ -263,7 +263,7 @@ const mockProducts: Product[] = [
     costPrice: 20000,
     stockQuantity: 150,
     reorderLevel: 30,
-    unit: 'piece',
+    //unit: 'piece',
     categoryId: 'oral-care',
     subcategory: 'Teeth Whitening',
     imageUrl: 'https://images.unsplash.com/photo-1609735189047-3ea09aa8e89c?w=400',
@@ -277,7 +277,7 @@ const mockProducts: Product[] = [
 export interface DashboardStats {
   bestSellingProduct: {
     name: string;
-    unitsSold: number;
+    //unitsSold: number;
     change: number;
   };
   inventoryAmount: {
@@ -286,7 +286,7 @@ export interface DashboardStats {
   };
   mostPurchasedDay: {
     day: string;
-    unitsSold: number;
+    //unitsSold: number;
     change: number;
   };
   productsOutOfStock: {
@@ -299,7 +299,7 @@ export interface DashboardStats {
 const mockStats: DashboardStats = {
   bestSellingProduct: {
     name: 'Sterling Bottle',
-    unitsSold: 300,
+    //unitsSold: 300,
     change: 36,
   },
   inventoryAmount: {
@@ -308,7 +308,7 @@ const mockStats: DashboardStats = {
   },
   mostPurchasedDay: {
     day: 'Friday',
-    unitsSold: 300,
+    //unitsSold: 300,
     change: 36,
   },
   productsOutOfStock: {
